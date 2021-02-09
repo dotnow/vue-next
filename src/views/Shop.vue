@@ -4,7 +4,7 @@
       <h4>Категории</h4>
       <Listbox
         v-model="filter['categoryID']"
-        :options="categories"
+        :options="categoriesList"
         optionLabel="name"
         optionValue="id"
       />
@@ -68,8 +68,13 @@ export default {
     const store = useStore()
     const route = useRoute()
     const layout = ref('grid')
-
     const filter = reactive({})
+
+    const categories = computed(() => store.getters['categories/all'])
+
+    const categoriesList = computed(() => {
+      return [{ id: '', name: 'Все' }, ...categories.value]
+    })
 
     onMounted(() => {
       if (route.query.n || route.query.c) {
@@ -88,8 +93,8 @@ export default {
     return {
       layout,
       filter,
+      categoriesList,
       products: computed(() => store.getters['products/byFilter']),
-      categories: computed(() => store.getters['categories/all']),
       categoryByID: computed(() => store.getters['categories/byID']),
       cart: computed(() => store.getters['cart/cart'])
     }
