@@ -2,29 +2,35 @@
   <div class="p-card p-m-2 p-px-2">
     <div class="p-card-content">
       <div class="p-grid nested-grid">
-        <div class="p-col-8">
-          <div class="p-grid">
-            <div class="p-col-2">
-              <img
-                :src="product.imgUrl"
-                :alt="product.name"
-                style="max-width: 100px"
-              />
-            </div>
-            <div class="p-col-6">
-              <h4>
-                {{ product.name }}
-              </h4>
+        <router-link
+          custom
+          v-slot="{ navigate }"
+          :to="{ name: 'product', params: { id: product.id } }"
+        >
+          <div class="p-col-10" @click="navigate" style="cursor: pointer">
+            <div class="p-grid">
+              <div class="p-col-2">
+                <img
+                  :src="product.imgUrl"
+                  :alt="product.name"
+                  style="max-width: 100px"
+                />
+              </div>
+              <div class="p-col-6">
+                <h4>
+                  {{ product.name }}
+                </h4>
 
-              <div>
-                <i class="pi pi-tag product-category-icon p-mr-2"></i>
-                <span class="product-category">{{
-                  categoryByID(product.categoryID).name
-                }}</span>
+                <div>
+                  <i class="pi pi-tag product-category-icon p-mr-2"></i>
+                  <span class="product-category">{{
+                    categoryByID(product.categoryID).name
+                  }}</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </router-link>
         <div class="p-col">
           <div class="p-grid p-text-right" style="height: 100%">
             <div class="p-col-12 p-as-start">

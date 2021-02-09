@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { computed, ref, watch, onMounted, reactive } from 'vue'
+import { computed, ref, onMounted, reactive, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
 import ProductGrid from '@/components/product/ProductGrid'
 import ProductList from '@/components/product/ProductList'
@@ -65,6 +65,7 @@ export default {
   props: ['name', 'categoryID'],
 
   setup(props) {
+    const { name, categoryID } = toRefs(props)
     const store = useStore()
     const layout = ref('grid')
     const filter = reactive({})
@@ -76,9 +77,17 @@ export default {
     })
 
     onMounted(() => {
-      if (props.name || props.categoryID) {
-        filter['name'] = props.name
-        filter['categoryID'] = props.categoryID
+      if (name.value || categoryID.value) {
+        filter['name'] = name.value
+        filter['categoryID'] = categoryID.value
+      }
+    })
+
+    // Back to 'shop' route
+    watch([name, categoryID], () => {
+      if (name.value === undefined && categoryID.value === undefined) {
+        filter['name'] = ''
+        filter['categoryID'] = ''
       }
     })
 

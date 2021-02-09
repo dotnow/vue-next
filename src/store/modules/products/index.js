@@ -30,10 +30,12 @@ export default {
     setFilter: ({ commit }, { name, categoryID }) => {
       commit('SET_FILTER', { name, categoryID })
 
-      router.replace({
-        name: router.currentRoute.value.name,
-        query: { n: name, c: categoryID }
-      })
+      if (name || categoryID) {
+        router.replace({
+          name: router.currentRoute.value.name,
+          query: { n: name, c: categoryID }
+        })
+      }
     }
   },
 

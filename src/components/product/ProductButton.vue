@@ -37,7 +37,9 @@ export default {
     const { setCartItem } = useCart()
 
     const addToCart = async id => {
-      await setCartItem({ id, value: 1 })
+      if (props.product.stock) {
+        await setCartItem({ id, value: 1 })
+      }
     }
 
     return {

@@ -3,9 +3,15 @@
     <td class="p-text-center">
       <img :src="product.imgUrl" :alt="product.name" style="max-width: 50px" />
     </td>
-    <td>
-      {{ product.name }}
-    </td>
+    <router-link
+      custom
+      v-slot="{ navigate }"
+      :to="{ name: 'product', params: { id: product.id } }"
+    >
+      <td @click="navigate" style="cursor: pointer">
+        {{ product.name }}
+      </td>
+    </router-link>
     <td class="p-text-center">
       <cart-input
         :amount="item[1]"
