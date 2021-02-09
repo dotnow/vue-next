@@ -1,30 +1,26 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view />
+  <component :is="layout" v-if="layout" />
+  <toast></toast>
+  <confirm-popup></confirm-popup>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import MainLayout from '@/layouts/MainLayout'
+import CleanLayout from '@/layouts/CleanLayout'
 
-#nav {
-  padding: 30px;
-}
+export default {
+  setup() {
+    const route = useRoute()
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+    return {
+      layout: computed(() =>
+        route.meta.layout ? `${route.meta.layout}-layout` : 'clean-layout'
+      )
+    }
+  },
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+  components: { MainLayout, CleanLayout }
 }
-</style>
+</script>
