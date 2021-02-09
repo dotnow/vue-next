@@ -19,6 +19,7 @@ const routes = [
     path: '/',
     name: 'shop',
     component: Shop,
+    props: route => ({ name: route.query.n, categoryID: route.query.c }),
     meta: {
       layout: 'main',
       title: 'Главная'
@@ -27,6 +28,7 @@ const routes = [
   {
     path: '/product/:id',
     name: 'product',
+    params: true,
     component: () => import('@/views/Product'),
     meta: {
       layout: 'main',

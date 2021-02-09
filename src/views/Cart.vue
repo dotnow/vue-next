@@ -43,8 +43,7 @@
 <script>
 import { useStore } from 'vuex'
 import { computed, inject } from 'vue'
-import AppEmpty from '@/components/app/AppEmpty.vue'
-import CartRow from '@/components/cart/CartRow.vue'
+import CartRow from '@/components/cart/CartRow'
 
 export default {
   setup() {
@@ -67,6 +66,6 @@ export default {
     }
   },
 
-  components: { AppEmpty, CartRow }
+  components: { CartRow }
 }
 </script>

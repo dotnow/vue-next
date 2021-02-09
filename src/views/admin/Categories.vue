@@ -101,7 +101,6 @@ import { useStore } from 'vuex'
 import { computed, ref } from 'vue'
 import { useCategories } from '@/use/categories'
 import { useToast } from 'primevue/usetoast'
-import AppEmpty from '@/components/app/AppEmpty.vue'
 import CategoryModal from '@/components/admin/categories/CategoryModal'
 import AppConfirm from '@/components/app/AppConfirm'
 
@@ -202,6 +201,6 @@ export default {
     }
   },
 
-  components: { AppEmpty, CategoryModal, AppConfirm }
+  components: { CategoryModal, AppConfirm }
 }
 </script>

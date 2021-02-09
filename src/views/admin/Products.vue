@@ -149,7 +149,6 @@ import { useStore } from 'vuex'
 import { computed, inject, ref } from 'vue'
 import { useProducts } from '@/use/products'
 import { useToast } from 'primevue/usetoast'
-import AppEmpty from '@/components/app/AppEmpty'
 import ProductModal from '@/components/admin/products/ProductModal'
 import AppConfirm from '@/components/app/AppConfirm'
 
@@ -235,6 +234,6 @@ export default {
     }
   },
 
-  components: { AppEmpty, ProductModal, AppConfirm }
+  components: { ProductModal, AppConfirm }
 }
 </script>

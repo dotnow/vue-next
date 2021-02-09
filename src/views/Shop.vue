@@ -58,15 +58,14 @@
 <script>
 import { computed, ref, watch, onMounted, reactive } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
 import ProductGrid from '@/components/product/ProductGrid'
 import ProductList from '@/components/product/ProductList'
-import AppEmpty from '@/components/app/AppEmpty'
 
 export default {
-  setup() {
+  props: ['name', 'categoryID'],
+
+  setup(props) {
     const store = useStore()
-    const route = useRoute()
     const layout = ref('grid')
     const filter = reactive({})
 
@@ -77,9 +76,9 @@ export default {
     })
 
     onMounted(() => {
-      if (route.query.n || route.query.c) {
-        filter['name'] = route.query.n
-        filter['categoryID'] = route.query.c
+      if (props.name || props.categoryID) {
+        filter['name'] = props.name
+        filter['categoryID'] = props.categoryID
       }
     })
 
@@ -99,6 +98,7 @@ export default {
       cart: computed(() => store.getters['cart/cart'])
     }
   },
-  components: { ProductGrid, ProductList, AppEmpty }
+
+  components: { ProductGrid, ProductList }
 }
 </script>

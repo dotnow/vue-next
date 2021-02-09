@@ -6,6 +6,7 @@
     :max="product.stock"
   ></cart-input>
   <Button
+    :label="label"
     icon="pi pi-shopping-cart"
     @click="addToCart(product.id)"
     v-else
@@ -26,6 +27,9 @@ export default {
     product: {
       type: Object,
       required: true
+    },
+    label: {
+      type: String
     }
   },
 

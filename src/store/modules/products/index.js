@@ -57,12 +57,7 @@ export default {
                 .includes(state.filter.name.toLowerCase())
             : el
         ),
-    byID: state => id =>
-      state.products.find(el => el.id === id) ?? {
-        name: 'Нет категории',
-        stock: 0,
-        price: 0
-      },
+    byID: state => id => state.products.find(el => el.id === id),
 
     byCategoryID: state => categoryID =>
       state.products.filter(el => el.categoryID === categoryID)

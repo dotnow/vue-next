@@ -1,33 +1,38 @@
 <template>
   <Card class="p-m-2 p-p-2">
     <template #header>
-      <div
-        style="width: 250px;
+      <router-link
+        custom
+        v-slot="{ navigate }"
+        :to="{ name: 'product', params: { id: product.id } }"
+      >
+        <span @click="navigate" style="cursor: pointer">
+          <div
+            style="width: 250px;
     position: absolute;
     text-align: right;"
-      >
-        <product-tag :stock="product.stock"></product-tag>
+          >
+            <product-tag :stock="product.stock"></product-tag>
+          </div>
+          <img :src="product.imgUrl" :alt="product.name" />
+          <div class="p-card-title p-text-center">
+            {{ product.name }}
+          </div>
+          <div class="p-card-subtitle p-text-center">
+            <i class="pi pi-tag product-category-icon p-mr-2"></i>
+            <span class="product-category">{{
+              categoryByID(product.categoryID).name
+            }}</span>
+          </div>
+        </span>
+      </router-link>
+      <div class="p-card-footer">
+        <product-button
+          :incart="inCart"
+          :product="product"
+          label="В корзину"
+        ></product-button>
       </div>
-      <img :src="product.imgUrl" :alt="product.name" />
-    </template>
-
-    <template #title>
-      <div class="p-text-center">
-        {{ product.name }}
-      </div>
-    </template>
-
-    <template #subtitle>
-      <div class="p-text-center">
-        <i class="pi pi-tag product-category-icon p-mr-2"></i>
-        <span class="product-category">{{
-          categoryByID(product.categoryID).name
-        }}</span>
-      </div>
-    </template>
-
-    <template #footer>
-      <product-button :incart="inCart" :product="product"></product-button>
     </template>
   </Card>
 </template>
