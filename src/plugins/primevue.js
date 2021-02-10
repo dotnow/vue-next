@@ -31,6 +31,7 @@ import DataView from 'primevue/dataview'
 import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions'
 import Tag from 'primevue/tag'
 import FileUpload from 'primevue/fileupload'
+import ProgressBar from 'primevue/progressbar'
 
 export default {
   install: (app, options) => {
@@ -61,6 +62,7 @@ export default {
       .component('DataViewLayoutOptions', DataViewLayoutOptions)
       .component('Tag', Tag)
       .component('FileUpload', FileUpload)
+      .component('ProgressBar', ProgressBar)
       .directive('badge', BadgeDirective)
   }
 }

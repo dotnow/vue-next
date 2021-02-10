@@ -5,6 +5,7 @@
     :style="{ width: '450px' }"
     class="p-fluid"
     :modal="true"
+    @hide="onHideDialog"
   >
     <img
       :src="product.imgUrl"
@@ -12,6 +13,13 @@
       class="product-image"
       v-if="product.imgUrl"
     />
+    <Button
+      v-if="product.imgFileName"
+      label="Удалить изображение"
+      icon="pi pi-trash"
+      class="p-button-danger p-button-sm p-mb-3"
+      @click="imageRemove"
+    ></Button>
     <div class="p-fluid">
       <div class="p-field">
         <label for="name">Наименование</label>
@@ -30,9 +38,22 @@
         />
       </div>
 
-      <div class="p-field">
-        <label for="imgUrl">Ссылка на картинку</label>
-        <InputText id="imgUrl" type="text" v-model="product.imgUrl" />
+      <div class="p-field" v-if="!product.imgFileName">
+        <label for="imgUrl">Картинка товара</label>
+        <div class="p-text-center">
+          <FileUpload
+            v-if="!progress"
+            chooseLabel="Загрузить изображение"
+            invalidFileSizeMessage="{0}: Слишком большой файл, размер файла должен быть меньше {1}."
+            accept="image/*"
+            :customUpload="true"
+            :maxFileSize="500000"
+            @uploader="imageUpload"
+            mode="basic"
+            :auto="true"
+          />
+          <ProgressBar :value="progress" v-else />
+        </div>
       </div>
     </div>
 
@@ -73,7 +94,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useToast } from 'primevue/usetoast'
 import { useProducts } from '@/use/products'
@@ -82,11 +103,78 @@ export default {
   setup() {
     const store = useStore()
     const toast = useToast()
-    const { addProduct, updateProduct, error } = useProducts()
+    const {
+      uploadFile,
+      removeFile,
+      addProduct,
+      updateProduct,
+      imgUrl,
+      imgFileName,
+      progress,
+      error
+    } = useProducts()
 
     const showModal = ref(false)
     const product = ref({})
     const isNew = ref(false)
+    const productSaved = ref(false)
+
+    const actionText = computed(() => (isNew.value ? 'Создать' : 'Обновить'))
+
+    watch(imgUrl, () => {
+      product.value.imgUrl = imgUrl.value
+      product.value.imgFileName = imgFileName.value
+
+      console.log(product.value.imgUrl, product.value.imgFileName)
+
+      toast.add({
+        severity: 'success',
+        summary: 'Успешно',
+        detail: 'Картинка загружена на сервер',
+        life: 3000
+      })
+    })
+
+    const onHideDialog = async () => {
+      if (isNew.value && product.value.imgFileName && !productSaved.value) {
+        await imageRemove()
+      }
+    }
+
+    const imageRemove = async () => {
+      await removeFile(product.value.imgFileName)
+      if (error.value) {
+        toast.add({
+          severity: 'error',
+          summary: 'Ошибка',
+          detail: 'Ошибка при удалении файла',
+          life: 3000
+        })
+      } else {
+        product.value.imgFileName = ''
+        product.value.imgUrl = ''
+      }
+    }
+
+    const imageUpload = async event => {
+      if (product.value.imgFileName) {
+        await imageRemove()
+        if (error.value) {
+          return
+        }
+      }
+
+      await uploadFile(event.files[0])
+
+      if (error.value) {
+        toast.add({
+          severity: 'error',
+          summary: 'Ошибка',
+          detail: error.value,
+          life: 3000
+        })
+      }
+    }
 
     const show = item => {
       if (item) {
@@ -97,14 +185,14 @@ export default {
         product.value = {
           name: '',
           categoryID: '',
-          mgUrl: '',
+          imgUrl: '',
+          imgFileName: '',
           price: 0,
           stock: 0
         }
       }
       showModal.value = true
     }
-    const actionText = computed(() => (isNew.value ? 'Создать' : 'Обновить'))
 
     const onSaveProduct = async () => {
       if (isNew.value) {
@@ -112,6 +200,7 @@ export default {
       } else {
         await onUpdateProduct(product.value)
       }
+      productSaved.value = true
       showModal.value = false
     }
 
@@ -156,11 +245,16 @@ export default {
     }
 
     return {
+      imgUrl,
+      imageUpload,
+      imageRemove,
+      progress,
       showModal,
       show,
       product,
       actionText,
       onSaveProduct,
+      onHideDialog,
       categories: computed(() => store.getters['categories/all'])
     }
   }

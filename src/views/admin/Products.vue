@@ -177,7 +177,7 @@ export default {
 
     const removeSelectedProducts = async () => {
       for (const item of selectedProducts.value) {
-        await onRemoveProduct(item.id)
+        await onRemoveProduct(item)
       }
       removeProductsDialog.value = false
       selectedProducts.value = []
@@ -190,11 +190,11 @@ export default {
       })
     }
 
-    const onRemoveProduct = async itemID => {
-      if (itemID) {
-        await removeProduct(itemID)
+    const onRemoveProduct = async item => {
+      if (item) {
+        await removeProduct(item)
       } else {
-        await removeProduct(product.value.id)
+        await removeProduct(product.value)
       }
       if (error.value) {
         toast.add({
@@ -203,7 +203,7 @@ export default {
           detail: 'Ошибка при удалении',
           life: 3000
         })
-      } else if (!itemID) {
+      } else if (!item) {
         toast.add({
           severity: 'success',
           summary: 'Успешно',
