@@ -16,6 +16,9 @@
             style="max-width: 300px"
           />
         </div>
+        <div class="p-text-center p-my-2">
+          <h3>{{ formatCurrency(product.price) }}</h3>
+        </div>
         <div class="p-text-center">
           <cart-button
             :incart="inCart"
@@ -35,7 +38,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import CartButton from '@/components/cart/CartButton'
@@ -56,6 +59,7 @@ export default {
     return {
       product,
       inCart,
+      formatCurrency: inject('formatCurrency'),
       categoryByID: computed(() => store.getters['categories/byID'])
     }
   },

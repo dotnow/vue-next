@@ -8,13 +8,13 @@
     @hide="onHideDialog"
   >
     <img
-      :src="product.imgUrl"
-      :alt="product.name"
+      :src="imgUrlForm"
+      :alt="name"
       class="product-image"
-      v-if="product.imgUrl"
+      v-if="imgUrlForm"
     />
     <Button
-      v-if="product.imgFileName"
+      v-if="imgFileNameForm"
       label="Удалить изображение"
       icon="pi pi-trash"
       class="p-button-danger p-button-sm p-mb-3"
@@ -23,22 +23,36 @@
     <div class="p-fluid">
       <div class="p-field">
         <label for="name">Наименование</label>
-        <InputText id="name" type="text" v-model="product.name" />
+        <InputText
+          id="name"
+          type="text"
+          aria-describedby="name-help"
+          :class="{ 'p-invalid': nameError }"
+          v-model="name"
+        />
+        <small id="name-help" class="p-error" v-if="nameError">{{
+          nameError
+        }}</small>
       </div>
 
       <div class="p-field">
         <label for="categoryID">Категория</label>
         <Dropdown
           id="categoryID"
-          v-model="product.categoryID"
+          v-model="categoryID"
           :options="categories"
+          aria-describedby="categoryID-help"
+          :class="{ 'p-invalid': categoryIDError }"
           optionLabel="name"
           optionValue="id"
           placeholder="Выберите категорию"
         />
+        <small id="categoryID-help" class="p-error" v-if="categoryIDError">{{
+          categoryIDError
+        }}</small>
       </div>
 
-      <div class="p-field" v-if="!product.imgFileName">
+      <div class="p-field" v-if="!imgFileNameForm">
         <label for="imgUrl">Картинка товара</label>
         <div class="p-text-center">
           <FileUpload
@@ -62,7 +76,7 @@
         <label for="price">Цена</label>
         <InputNumber
           id="price"
-          v-model="product.price"
+          v-model="price"
           mode="currency"
           currency="RUB"
           locale="ru-RU"
@@ -72,7 +86,7 @@
 
       <div class="p-field p-col">
         <label for="stock">Остаток на складе</label>
-        <InputNumber id="stock" v-model="product.stock" :min="0" />
+        <InputNumber id="stock" v-model="stock" :min="0" />
       </div>
     </div>
 
@@ -87,6 +101,7 @@
         :label="actionText"
         icon="pi pi-check"
         class="p-button-text"
+        :disabled="!isFormValid"
         @click="onSaveProduct"
       />
     </template>
@@ -98,6 +113,8 @@ import { computed, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useToast } from 'primevue/usetoast'
 import { useProducts } from '@/use/products'
+import { useForm, useField } from 'vee-validate'
+import * as yup from 'yup'
 
 export default {
   setup() {
@@ -115,17 +132,45 @@ export default {
     } = useProducts()
 
     const showModal = ref(false)
-    const product = ref({})
+    const id = ref('')
     const isNew = ref(false)
     const productSaved = ref(false)
 
+    const schema = yup.object({
+      name: yup
+        .string()
+        .required('Введите название товара')
+        .min(3, 'Название должно быть больше 3 символов')
+        .max(20, 'Название должно быть меньше 20 символов'),
+      categoryID: yup.string().required('Выберите категорию'),
+      imgUrl: yup.string(),
+      imgFileName: yup.string(),
+      price: yup.number(),
+      stock: yup.number()
+    })
+
+    useForm({
+      validationSchema: schema
+    })
+
+    const { value: name, errorMessage: nameError } = useField('name')
+    const { value: categoryID, errorMessage: categoryIDError } = useField(
+      'categoryID'
+    )
+    const { value: imgUrlForm } = useField('imgUrl')
+    const { value: imgFileNameForm } = useField('imgFileName')
+    const { value: price } = useField('price')
+    const { value: stock } = useField('stock')
+
     const actionText = computed(() => (isNew.value ? 'Создать' : 'Обновить'))
 
-    watch(imgUrl, () => {
-      product.value.imgUrl = imgUrl.value
-      product.value.imgFileName = imgFileName.value
+    const isFormValid = computed(
+      () => !nameError.value && !categoryIDError.value
+    )
 
-      console.log(product.value.imgUrl, product.value.imgFileName)
+    watch(imgUrl, () => {
+      imgUrlForm.value = imgUrl.value
+      imgFileNameForm.value = imgFileName.value
 
       toast.add({
         severity: 'success',
@@ -136,13 +181,13 @@ export default {
     })
 
     const onHideDialog = async () => {
-      if (isNew.value && product.value.imgFileName && !productSaved.value) {
+      if (isNew.value && imgFileNameForm.value && !productSaved.value) {
         await imageRemove()
       }
     }
 
     const imageRemove = async () => {
-      await removeFile(product.value.imgFileName)
+      await removeFile(imgFileNameForm.value)
       if (error.value) {
         toast.add({
           severity: 'error',
@@ -151,13 +196,13 @@ export default {
           life: 3000
         })
       } else {
-        product.value.imgFileName = ''
-        product.value.imgUrl = ''
+        imgFileNameForm.value = ''
+        imgUrlForm.value = ''
       }
     }
 
     const imageUpload = async event => {
-      if (product.value.imgFileName) {
+      if (imgFileNameForm.value) {
         await imageRemove()
         if (error.value) {
           return
@@ -179,27 +224,43 @@ export default {
     const show = item => {
       if (item) {
         isNew.value = false
-        product.value = item
+        id.value = item['id']
+        name.value = item['name']
+        categoryID.value = item['categoryID']
+        imgUrlForm.value = item['imgUrl']
+        imgFileNameForm.value = item['imgFileName']
+        price.value = item['price']
+        stock.value = item['stock']
       } else {
         isNew.value = true
-        product.value = {
-          name: '',
-          categoryID: '',
-          imgUrl: '',
-          imgFileName: '',
-          price: 0,
-          stock: 0
-        }
+        name.value = ''
+        categoryID.value = ''
+        imgUrlForm.value = ''
+        imgFileNameForm.value = ''
+        price.value = 0
+        stock.value = 0
       }
       showModal.value = true
     }
 
     const onSaveProduct = async () => {
-      if (isNew.value) {
-        await onAddProduct(product.value)
-      } else {
-        await onUpdateProduct(product.value)
+      const product = {
+        id: id.value,
+        name: name.value,
+        categoryID: categoryID.value,
+        imgUrl: imgUrlForm.value ?? '',
+        imgFileName: imgFileNameForm.value ?? '',
+        price: price.value,
+        stock: stock.value
       }
+
+      if (isNew.value) {
+        delete product.id
+        await onAddProduct(product)
+      } else {
+        await onUpdateProduct(product)
+      }
+
       productSaved.value = true
       showModal.value = false
     }
@@ -245,13 +306,21 @@ export default {
     }
 
     return {
+      name,
+      nameError,
+      categoryID,
+      categoryIDError,
+      imgUrlForm,
+      imgFileNameForm,
+      price,
+      stock,
       imgUrl,
       imageUpload,
       imageRemove,
       progress,
       showModal,
       show,
-      product,
+      isFormValid,
       actionText,
       onSaveProduct,
       onHideDialog,
@@ -260,5 +329,3 @@ export default {
   }
 }
 </script>
-
-<style></style>
