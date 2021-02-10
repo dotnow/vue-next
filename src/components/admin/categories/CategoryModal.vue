@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :header="headerText"
+    header="Детали категории"
     v-model:visible="showModal"
     :style="{ width: '50vw' }"
     :modal="true"
@@ -36,7 +36,7 @@ export default {
     const show = item => {
       if (item) {
         isNew.value = false
-        category.value = JSON.parse(JSON.stringify(item))
+        category.value = item
       } else {
         isNew.value = true
         category.value.name = ''
@@ -45,11 +45,6 @@ export default {
       showModal.value = true
     }
 
-    const headerText = computed(() =>
-      isNew.value
-        ? 'Создание новой категории'
-        : `Редактирование категории: ${category.value.name}`
-    )
     const actionText = computed(() => (isNew.value ? 'Создать' : 'Обновить'))
 
     const onSaveCategory = async () => {
@@ -83,10 +78,21 @@ export default {
 
     const onUpdateCategory = async category => {
       await updateCategory(category)
+
       if (error.value) {
-        // !ok
+        toast.add({
+          severity: 'error',
+          summary: 'Ошибка',
+          detail: 'Ошибка при обновлении',
+          life: 3000
+        })
       } else {
-        // ok
+        toast.add({
+          severity: 'success',
+          summary: 'Успешно',
+          detail: 'Категория обновлена',
+          life: 3000
+        })
       }
     }
 
@@ -94,7 +100,6 @@ export default {
       showModal,
       show,
       category,
-      headerText,
       actionText,
       onSaveCategory
     }

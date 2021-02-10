@@ -30,6 +30,7 @@ import Toolbar from 'primevue/toolbar'
 import DataView from 'primevue/dataview'
 import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions'
 import Tag from 'primevue/tag'
+import FileUpload from 'primevue/fileupload'
 
 export default {
   install: (app, options) => {
@@ -59,6 +60,7 @@ export default {
       .component('DataView', DataView)
       .component('DataViewLayoutOptions', DataViewLayoutOptions)
       .component('Tag', Tag)
+      .component('FileUpload', FileUpload)
       .directive('badge', BadgeDirective)
   }
 }

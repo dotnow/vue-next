@@ -17,11 +17,11 @@
           />
         </div>
         <div class="p-text-center">
-          <product-button
+          <cart-button
             :incart="inCart"
             :product="product"
             label="В корзину"
-          ></product-button>
+          ></cart-button>
         </div>
       </template>
     </Card>
@@ -38,7 +38,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
-import ProductButton from '@/components/product/ProductButton'
+import CartButton from '@/components/cart/CartButton'
 
 export default {
   setup() {
@@ -60,6 +60,6 @@ export default {
     }
   },
 
-  components: { ProductButton }
+  components: { CartButton }
 }
 </script>

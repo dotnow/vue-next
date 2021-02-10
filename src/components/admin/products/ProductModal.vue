@@ -91,7 +91,7 @@ export default {
     const show = item => {
       if (item) {
         isNew.value = false
-        product.value = JSON.parse(JSON.stringify(item))
+        product.value = item
       } else {
         isNew.value = true
         product.value = {
@@ -137,10 +137,21 @@ export default {
 
     const onUpdateProduct = async product => {
       await updateProduct(product)
+
       if (error.value) {
-        // !ok
+        toast.add({
+          severity: 'error',
+          summary: 'Ошибка',
+          detail: 'Ошибка при обновлении',
+          life: 3000
+        })
       } else {
-        // ok
+        toast.add({
+          severity: 'success',
+          summary: 'Успешно',
+          detail: 'Товар обновлён',
+          life: 3000
+        })
       }
     }
 

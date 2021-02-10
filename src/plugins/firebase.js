@@ -1,6 +1,7 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
+import 'firebase/storage'
 import store from '@/store'
 
 const firebaseConfig = {
@@ -17,6 +18,9 @@ firebase.initializeApp(firebaseConfig)
 
 const dbService = firebase.database()
 const authService = firebase.auth()
+const storageService = firebase.storage()
+
+const imagesRef = storageService.ref('images')
 
 authService.languageCode = 'ru'
 
@@ -98,9 +102,11 @@ const detachCart = () => {
 export {
   dbService,
   authService,
+  storageService,
   appVerifier,
   productsRef,
   categoriesRef,
+  imagesRef,
   attachCart,
   detachCart,
   cartRef

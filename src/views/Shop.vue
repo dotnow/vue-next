@@ -41,13 +41,13 @@
 
         <template #list="slotProps">
           <div class="p-col-12">
-            <product-list :product="slotProps.data"></product-list>
+            <product-list-card :product="slotProps.data"></product-list-card>
           </div>
         </template>
 
         <template #grid="slotProps">
           <div class="p-col-12 p-md-3">
-            <product-grid :product="slotProps.data"></product-grid>
+            <product-grid-card :product="slotProps.data"></product-grid-card>
           </div>
         </template>
       </DataView>
@@ -58,8 +58,9 @@
 <script>
 import { computed, ref, onMounted, reactive, toRefs, watch } from 'vue'
 import { useStore } from 'vuex'
-import ProductGrid from '@/components/product/ProductGrid'
-import ProductList from '@/components/product/ProductList'
+import { useRouter } from 'vue-router'
+import ProductGridCard from '@/components/product/ProductGridCard'
+import ProductListCard from '@/components/product/ProductListCard'
 
 export default {
   props: ['name', 'categoryID'],
@@ -67,6 +68,7 @@ export default {
   setup(props) {
     const { name, categoryID } = toRefs(props)
     const store = useStore()
+    const router = useRouter()
     const layout = ref('grid')
     const filter = reactive({})
 
@@ -76,38 +78,50 @@ export default {
       return [{ id: '', name: 'Все' }, ...categories.value]
     })
 
-    onMounted(() => {
-      if (name.value || categoryID.value) {
-        filter['name'] = name.value
-        filter['categoryID'] = categoryID.value
-      }
-    })
+    const categoryByID = computed(() => store.getters['categories/byID'])
 
-    // Back to 'shop' route
-    watch([name, categoryID], () => {
-      if (name.value === undefined && categoryID.value === undefined) {
-        filter['name'] = ''
-        filter['categoryID'] = ''
-      }
+    const products = computed(() =>
+      store.getters['products/all']
+        .filter(el =>
+          filter['categoryID'] ? el.categoryID === filter['categoryID'] : el
+        )
+        .filter(el =>
+          filter['name']
+            ? el.name.toLowerCase().includes(filter['name'].toLowerCase()) ||
+              categoryByID
+                .value(el.categoryID)
+                .name.toLowerCase()
+                .includes(filter['name'].toLowerCase())
+            : el
+        )
+    )
+
+    onMounted(() => {
+      filter['name'] = name.value
+      filter['categoryID'] = categoryID.value
     })
 
     watch(filter, () => {
-      store.dispatch('products/setFilter', {
-        name: filter['name'],
-        categoryID: filter['categoryID']
-      })
+      if (!filter['name']) {
+        delete filter['name']
+      }
+
+      if (!filter['categoryID']) {
+        delete filter['categoryID']
+      }
+
+      router.replace({ query: filter })
     })
 
     return {
       layout,
       filter,
       categoriesList,
-      products: computed(() => store.getters['products/byFilter']),
-      categoryByID: computed(() => store.getters['categories/byID']),
+      products,
       cart: computed(() => store.getters['cart/cart'])
     }
   },
 
-  components: { ProductGrid, ProductList }
+  components: { ProductGridCard, ProductListCard }
 }
 </script>

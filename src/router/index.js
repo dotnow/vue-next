@@ -19,7 +19,10 @@ const routes = [
     path: '/',
     name: 'shop',
     component: Shop,
-    props: route => ({ name: route.query.n, categoryID: route.query.c }),
+    props: route => ({
+      name: route.query.name,
+      categoryID: route.query.categoryID
+    }),
     meta: {
       layout: 'main',
       title: 'Главная'

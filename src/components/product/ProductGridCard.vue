@@ -19,28 +19,31 @@
             {{ product.name }}
           </div>
           <div class="p-card-subtitle p-text-center">
-            <i class="pi pi-tag product-category-icon p-mr-2"></i>
+            <i class="pi pi-tag product-category-icon p-mr-1"></i>
             <span class="product-category">{{
               categoryByID(product.categoryID).name
             }}</span>
           </div>
+          <div class="p-card-title p-text-center">
+            {{ formatCurrency(product.price) }}
+          </div>
         </span>
       </router-link>
       <div class="p-card-footer">
-        <product-button
+        <cart-button
           :incart="inCart"
           :product="product"
           label="В корзину"
-        ></product-button>
+        ></cart-button>
       </div>
     </template>
   </Card>
 </template>
 
 <script>
-import { computed, toRefs } from 'vue'
+import { computed, inject, toRefs } from 'vue'
 import { useStore } from 'vuex'
-import ProductButton from '@/components/product/ProductButton'
+import CartButton from '@/components/cart/CartButton'
 import ProductTag from '@/components/product/ProductTag'
 
 export default {
@@ -62,10 +65,11 @@ export default {
     return {
       ...toRefs(props),
       inCart,
+      formatCurrency: inject('formatCurrency'),
       categoryByID: computed(() => store.getters['categories/byID'])
     }
   },
 
-  components: { ProductButton, ProductTag }
+  components: { CartButton, ProductTag }
 }
 </script>

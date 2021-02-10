@@ -17,15 +17,18 @@
                 />
               </div>
               <div class="p-col-6">
-                <h4>
+                <div class="p-card-title">
                   {{ product.name }}
-                </h4>
+                </div>
 
-                <div>
+                <div class="p-my-2">
                   <i class="pi pi-tag product-category-icon p-mr-2"></i>
                   <span class="product-category">{{
                     categoryByID(product.categoryID).name
                   }}</span>
+                </div>
+                <div class="p-card-title">
+                  {{ formatCurrency(product.price) }}
                 </div>
               </div>
             </div>
@@ -40,10 +43,7 @@
             </div>
 
             <div class="p-col-12 p-as-end">
-              <product-button
-                :incart="inCart"
-                :product="product"
-              ></product-button>
+              <cart-button :incart="inCart" :product="product"></cart-button>
             </div>
           </div>
         </div>
@@ -53,9 +53,9 @@
 </template>
 
 <script>
-import { computed, toRefs } from 'vue'
+import { computed, toRefs, inject } from 'vue'
 import { useStore } from 'vuex'
-import ProductButton from '@/components/product/ProductButton'
+import CartButton from '@/components/cart/CartButton'
 import ProductTag from '@/components/product/ProductTag'
 
 export default {
@@ -77,10 +77,11 @@ export default {
     return {
       ...toRefs(props),
       inCart,
+      formatCurrency: inject('formatCurrency'),
       categoryByID: computed(() => store.getters['categories/byID'])
     }
   },
 
-  components: { ProductButton, ProductTag }
+  components: { CartButton, ProductTag }
 }
 </script>
