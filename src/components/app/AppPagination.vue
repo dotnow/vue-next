@@ -33,7 +33,7 @@ export default {
 
   setup(props) {
     return {
-      pages: Math.floor(props.amount / props.perPage)
+      pages: Math.ceil(props.amount / props.perPage)
     }
   }
 }
