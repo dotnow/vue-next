@@ -6,7 +6,7 @@
     :max="product.stock"
   ></cart-input>
   <Button
-    :label="label"
+    :label="product.stock ? label : 'Нет в наличии'"
     icon="pi pi-shopping-cart"
     @click="addToCart(product.id)"
     v-else

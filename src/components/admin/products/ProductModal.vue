@@ -14,13 +14,17 @@
         class="product-image"
         v-if="imgUrlForm"
       />
-      <Button
-        v-if="imgFileNameForm"
-        label="Удалить изображение"
-        icon="pi pi-trash"
-        class="p-button-danger p-button-sm p-mb-3"
-        @click="imageRemove"
-      ></Button>
+      <div class="p-d-flex p-jc-center">
+        <div>
+          <Button
+            v-if="imgFileNameForm"
+            label="Удалить изображение"
+            icon="pi pi-trash"
+            class="p-button-danger p-button-sm p-mb-3"
+            @click="imageRemove"
+          ></Button>
+        </div>
+      </div>
       <div class="p-fluid">
         <div class="p-field">
           <label for="name">Наименование</label>
@@ -73,11 +77,11 @@
 
         <div class="p-field">
           <label for="description">Описание товара</label>
-          <div class="p-text-center">
+          <div>
             <Editor
               id="description"
               v-model="description"
-              editorStyle="height: 320px"
+              editorStyle="height: 250px"
             />
           </div>
         </div>
@@ -149,12 +153,21 @@ export default {
     const isNew = ref(false)
     const productSaved = ref(false)
 
+    const NAME_MIN_LENGTH = 3
+    const NAME_MAX_LENGTH = 20
+
     const schema = yup.object({
       name: yup
         .string()
         .required('Введите название товара')
-        .min(3, 'Название должно быть больше 3 символов')
-        .max(20, 'Название должно быть меньше 20 символов'),
+        .min(
+          NAME_MIN_LENGTH,
+          `Название должно быть больше ${NAME_MIN_LENGTH} символов`
+        )
+        .max(
+          NAME_MAX_LENGTH,
+          `Название должно быть меньше ${NAME_MAX_LENGTH} символов`
+        ),
       categoryID: yup.string().required('Выберите категорию'),
       imgUrl: yup.string(),
       imgFileName: yup.string(),

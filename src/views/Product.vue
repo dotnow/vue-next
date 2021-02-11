@@ -54,14 +54,16 @@
       </template>
     </Card>
 
-    <h2>Похожие товары:</h2>
-    <div class="p-grid">
-      <div
-        class="p-col-2"
-        v-for="sameProduct in sameProducts"
-        :key="`sameProduct_${sameProduct.id}`"
-      >
-        <product-grid-card :product="sameProduct"></product-grid-card>
+    <div v-if="sameProducts.length">
+      <h2>Похожие товары:</h2>
+      <div class="p-grid">
+        <div
+          class="p-col-2"
+          v-for="sameProduct in sameProducts"
+          :key="`sameProduct_${sameProduct.id}`"
+        >
+          <product-grid-card :product="sameProduct"></product-grid-card>
+        </div>
       </div>
     </div>
   </div>
