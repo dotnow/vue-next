@@ -1,122 +1,124 @@
 <template>
-  <Dialog
-    header="Детали товара"
-    v-model:visible="showModal"
-    :style="{ width: '800px' }"
-    class="p-fluid"
-    :modal="true"
-    @hide="onHideDialog"
-  >
-    <img
-      :src="imgUrlForm"
-      :alt="name"
-      class="product-image"
-      v-if="imgUrlForm"
-    />
-    <Button
-      v-if="imgFileNameForm"
-      label="Удалить изображение"
-      icon="pi pi-trash"
-      class="p-button-danger p-button-sm p-mb-3"
-      @click="imageRemove"
-    ></Button>
-    <div class="p-fluid">
-      <div class="p-field">
-        <label for="name">Наименование</label>
-        <InputText
-          id="name"
-          type="text"
-          aria-describedby="name-help"
-          :class="{ 'p-invalid': nameError }"
-          v-model="name"
-        />
-        <small id="name-help" class="p-error" v-if="nameError">{{
-          nameError
-        }}</small>
-      </div>
-
-      <div class="p-field">
-        <label for="categoryID">Категория</label>
-        <Dropdown
-          id="categoryID"
-          v-model="categoryID"
-          :options="categories"
-          aria-describedby="categoryID-help"
-          :class="{ 'p-invalid': categoryIDError }"
-          optionLabel="name"
-          optionValue="id"
-          placeholder="Выберите категорию"
-        />
-        <small id="categoryID-help" class="p-error" v-if="categoryIDError">{{
-          categoryIDError
-        }}</small>
-      </div>
-
-      <div class="p-field" v-if="!imgFileNameForm">
-        <label for="imgUrl">Картинка товара</label>
-        <div class="p-text-center">
-          <FileUpload
-            v-if="!progress"
-            chooseLabel="Загрузить изображение"
-            invalidFileSizeMessage="{0}: Слишком большой файл, размер файла должен быть меньше {1}."
-            accept="image/*"
-            :customUpload="true"
-            :maxFileSize="500000"
-            @uploader="imageUpload"
-            mode="basic"
-            :auto="true"
+  <teleport to="body">
+    <Dialog
+      header="Детали товара"
+      v-model:visible="showModal"
+      :style="{ width: '800px' }"
+      class="p-fluid"
+      :modal="true"
+      @hide="onHideDialog"
+    >
+      <img
+        :src="imgUrlForm"
+        :alt="name"
+        class="product-image"
+        v-if="imgUrlForm"
+      />
+      <Button
+        v-if="imgFileNameForm"
+        label="Удалить изображение"
+        icon="pi pi-trash"
+        class="p-button-danger p-button-sm p-mb-3"
+        @click="imageRemove"
+      ></Button>
+      <div class="p-fluid">
+        <div class="p-field">
+          <label for="name">Наименование</label>
+          <InputText
+            id="name"
+            type="text"
+            aria-describedby="name-help"
+            :class="{ 'p-invalid': nameError }"
+            v-model="name"
           />
-          <ProgressBar :value="progress" v-else />
+          <small id="name-help" class="p-error" v-if="nameError">{{
+            nameError
+          }}</small>
+        </div>
+
+        <div class="p-field">
+          <label for="categoryID">Категория</label>
+          <Dropdown
+            id="categoryID"
+            v-model="categoryID"
+            :options="categories"
+            aria-describedby="categoryID-help"
+            :class="{ 'p-invalid': categoryIDError }"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Выберите категорию"
+          />
+          <small id="categoryID-help" class="p-error" v-if="categoryIDError">{{
+            categoryIDError
+          }}</small>
+        </div>
+
+        <div class="p-field" v-if="!imgFileNameForm">
+          <label for="imgUrl">Картинка товара</label>
+          <div class="p-text-center">
+            <FileUpload
+              v-if="!progress"
+              chooseLabel="Загрузить изображение"
+              invalidFileSizeMessage="{0}: Слишком большой файл, размер файла должен быть меньше {1}."
+              accept="image/*"
+              :customUpload="true"
+              :maxFileSize="500000"
+              @uploader="imageUpload"
+              mode="basic"
+              :auto="true"
+            />
+            <ProgressBar :value="progress" v-else />
+          </div>
+        </div>
+
+        <div class="p-field">
+          <label for="description">Описание товара</label>
+          <div class="p-text-center">
+            <Editor
+              id="description"
+              v-model="description"
+              editorStyle="height: 320px"
+            />
+          </div>
         </div>
       </div>
 
-      <div class="p-field">
-        <label for="description">Описание товара</label>
-        <div class="p-text-center">
-          <Editor
-            id="description"
-            v-model="description"
-            editorStyle="height: 320px"
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col">
+          <label for="price">Цена</label>
+          <InputNumber
+            id="price"
+            v-model="price"
+            mode="currency"
+            currency="RUB"
+            locale="ru-RU"
+            :maxFractionDigits="0"
           />
         </div>
-      </div>
-    </div>
 
-    <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col">
-        <label for="price">Цена</label>
-        <InputNumber
-          id="price"
-          v-model="price"
-          mode="currency"
-          currency="RUB"
-          locale="ru-RU"
-          :maxFractionDigits="0"
+        <div class="p-field p-col">
+          <label for="stock">Остаток на складе</label>
+          <InputNumber id="stock" v-model="stock" :min="0" />
+        </div>
+      </div>
+
+      <template #footer>
+        <Button
+          label="Отмена"
+          icon="pi pi-times"
+          class="p-button-text"
+          @click="showModal = false"
         />
-      </div>
-
-      <div class="p-field p-col">
-        <label for="stock">Остаток на складе</label>
-        <InputNumber id="stock" v-model="stock" :min="0" />
-      </div>
-    </div>
-
-    <template #footer>
-      <Button
-        label="Отмена"
-        icon="pi pi-times"
-        class="p-button-text"
-        @click="showModal = false"
-      />
-      <Button
-        :label="actionText"
-        icon="pi pi-check"
-        class="p-button-text"
-        :disabled="!isFormValid"
-        @click="onSaveProduct"
-      />
-    </template>
-  </Dialog>
+        <Button
+          :label="actionText"
+          icon="pi pi-check"
+          class="p-button-text"
+          :disabled="!isFormValid"
+          @click="onSaveProduct"
+        />
+      </template>
+    </Dialog>
+  </teleport>
 </template>
 
 <script>
@@ -240,9 +242,9 @@ export default {
         id.value = item['id']
         name.value = item['name']
         categoryID.value = item['categoryID']
-        imgUrlForm.value = item['imgUrl']
-        imgFileNameForm.value = item['imgFileName']
-        description.value = item['description']
+        imgUrlForm.value = item['imgUrl'] ?? ''
+        imgFileNameForm.value = item['imgFileName'] ?? ''
+        description.value = item['description'] ?? ''
         price.value = item['price']
         stock.value = item['stock']
       } else {

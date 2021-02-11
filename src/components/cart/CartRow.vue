@@ -1,6 +1,6 @@
 <template>
   <tr draggable="false">
-    <td class="p-text-center">
+    <td class="p-text-center" v-if="product.imgUrl">
       <img :src="product.imgUrl" :alt="product.name" style="max-width: 50px" />
     </td>
     <router-link

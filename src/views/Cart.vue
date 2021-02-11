@@ -61,7 +61,10 @@ export default {
     const cartItems = computed(() => store.getters['cart/cart'])
     const cartTotalSum = computed(() =>
       cartItems.value.reduce(
-        (acc, cur) => acc + product.value(cur[0]).price * cur[1],
+        (acc, cur) =>
+          product.value(cur[0])
+            ? acc + product.value(cur[0]).price * cur[1]
+            : acc,
         0
       )
     )
