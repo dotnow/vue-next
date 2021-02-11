@@ -1,8 +1,6 @@
 <template>
-  <div
-    uk-height-viewport
-    class="uk-flex uk-background-secondary uk-text-center"
-  >
+  <div class="p-text-center">
+    <h1>Войдите в систему</h1>
     <div
       class="uk-margin-auto uk-margin-auto-vertical uk-width-1-2@s uk-card uk-card-body uk-background-default uk-box-shadow-large"
     >
