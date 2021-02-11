@@ -7,11 +7,7 @@
         :to="{ name: 'product', params: { id: product.id } }"
       >
         <span @click="navigate" style="cursor: pointer">
-          <div
-            style="width: 250px;
-    position: absolute;
-    text-align: right;"
-          >
+          <div style="width: 100%; text-align: right;">
             <product-tag :stock="product.stock"></product-tag>
           </div>
           <img :src="product.imgUrl" :alt="product.name" />

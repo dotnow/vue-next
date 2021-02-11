@@ -2,7 +2,7 @@
   <Dialog
     header="Детали товара"
     v-model:visible="showModal"
-    :style="{ width: '450px' }"
+    :style="{ width: '800px' }"
     class="p-fluid"
     :modal="true"
     @hide="onHideDialog"
@@ -67,6 +67,17 @@
             :auto="true"
           />
           <ProgressBar :value="progress" v-else />
+        </div>
+      </div>
+
+      <div class="p-field">
+        <label for="description">Описание товара</label>
+        <div class="p-text-center">
+          <Editor
+            id="description"
+            v-model="description"
+            editorStyle="height: 320px"
+          />
         </div>
       </div>
     </div>
@@ -145,6 +156,7 @@ export default {
       categoryID: yup.string().required('Выберите категорию'),
       imgUrl: yup.string(),
       imgFileName: yup.string(),
+      description: yup.string(),
       price: yup.number(),
       stock: yup.number()
     })
@@ -159,6 +171,7 @@ export default {
     )
     const { value: imgUrlForm } = useField('imgUrl')
     const { value: imgFileNameForm } = useField('imgFileName')
+    const { value: description } = useField('description')
     const { value: price } = useField('price')
     const { value: stock } = useField('stock')
 
@@ -229,6 +242,7 @@ export default {
         categoryID.value = item['categoryID']
         imgUrlForm.value = item['imgUrl']
         imgFileNameForm.value = item['imgFileName']
+        description.value = item['description']
         price.value = item['price']
         stock.value = item['stock']
       } else {
@@ -237,6 +251,7 @@ export default {
         categoryID.value = ''
         imgUrlForm.value = ''
         imgFileNameForm.value = ''
+        description.value = ''
         price.value = 0
         stock.value = 0
       }
@@ -250,6 +265,7 @@ export default {
         categoryID: categoryID.value,
         imgUrl: imgUrlForm.value ?? '',
         imgFileName: imgFileNameForm.value ?? '',
+        description: description.value,
         price: price.value,
         stock: stock.value
       }
@@ -312,6 +328,7 @@ export default {
       categoryIDError,
       imgUrlForm,
       imgFileNameForm,
+      description,
       price,
       stock,
       imgUrl,
