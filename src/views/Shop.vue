@@ -1,13 +1,12 @@
 <template>
   <div class="p-grid">
-    <div class="p-col-2">
+    <div class="p-col-3">
       <h4>Категории</h4>
-      <Listbox
-        v-model="filter['categoryID']"
-        :options="categoriesList"
-        optionLabel="name"
-        optionValue="id"
-      />
+      <app-categpries-list
+        v-model:filter="filter"
+        :name="name"
+        :categoryID="categoryID"
+      ></app-categpries-list>
     </div>
     <div class="p-col">
       <DataView :value="products" :layout="layout" :paginator="true" :rows="12">
@@ -56,34 +55,32 @@
 </template>
 
 <script>
-import { computed, ref, onMounted, reactive, toRefs, watch } from 'vue'
+import { computed, ref, reactive, toRefs } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
 import ProductGridCard from '@/components/product/ProductGridCard'
 import ProductListCard from '@/components/product/ProductListCard'
+import AppCategpriesList from '@/components/app/AppCategpriesList'
 
 export default {
   props: ['name', 'categoryID'],
 
   setup(props) {
-    const { name, categoryID } = toRefs(props)
     const store = useStore()
-    const router = useRouter()
     const layout = ref('grid')
     const filter = reactive({})
-
-    const categories = computed(() => store.getters['categories/all'])
-
-    const categoriesList = computed(() => {
-      return [{ id: '', name: 'Все' }, ...categories.value]
-    })
 
     const categoryByID = computed(() => store.getters['categories/byID'])
 
     const products = computed(() =>
       store.getters['products/all']
         .filter(el =>
-          filter['categoryID'] ? el.categoryID === filter['categoryID'] : el
+          filter['categoryID'] && filter['categoryID'].length
+            ? filter['categoryID'].includes('all') ||
+              filter['categoryID'].includes(el.categoryID) ||
+              filter['categoryID'].includes(
+                categoryByID.value(el.categoryID).parentID
+              )
+            : el
         )
         .filter(el =>
           filter['name']
@@ -96,32 +93,15 @@ export default {
         )
     )
 
-    onMounted(() => {
-      filter['name'] = name.value
-      filter['categoryID'] = categoryID.value
-    })
-
-    watch(filter, () => {
-      if (!filter['name']) {
-        delete filter['name']
-      }
-
-      if (!filter['categoryID']) {
-        delete filter['categoryID']
-      }
-
-      router.replace({ query: filter })
-    })
-
     return {
+      ...toRefs(props),
       layout,
       filter,
-      categoriesList,
       products,
       cart: computed(() => store.getters['cart/cart'])
     }
   },
 
-  components: { ProductGridCard, ProductListCard }
+  components: { ProductGridCard, ProductListCard, AppCategpriesList }
 }
 </script>

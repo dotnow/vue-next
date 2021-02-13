@@ -23,7 +23,6 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Card from 'primevue/card'
 import TabMenu from 'primevue/tabmenu'
-import Listbox from 'primevue/listbox'
 import InlineMessage from 'primevue/inlinemessage'
 import MultiSelect from 'primevue/multiselect'
 import Toolbar from 'primevue/toolbar'
@@ -33,6 +32,9 @@ import Tag from 'primevue/tag'
 import FileUpload from 'primevue/fileupload'
 import ProgressBar from 'primevue/progressbar'
 import Editor from 'primevue/editor'
+import Tree from 'primevue/tree'
+import Textarea from 'primevue/textarea'
+import CascadeSelect from 'primevue/cascadeselect'
 
 export default {
   install: (app, options) => {
@@ -55,7 +57,6 @@ export default {
       .component('DataTable', DataTable)
       .component('Column', Column)
       .component('TabMenu', TabMenu)
-      .component('Listbox', Listbox)
       .component('InlineMessage', InlineMessage)
       .component('Toolbar', Toolbar)
       .component('MultiSelect', MultiSelect)
@@ -65,6 +66,9 @@ export default {
       .component('FileUpload', FileUpload)
       .component('ProgressBar', ProgressBar)
       .component('Editor', Editor)
+      .component('Tree', Tree)
+      .component('Textarea', Textarea)
+      .component('CascadeSelect', CascadeSelect)
       .directive('badge', BadgeDirective)
   }
 }

@@ -82,7 +82,9 @@
     </Column>
   </DataTable>
 
-  <category-modal ref="modal"></category-modal>
+  <teleport to="body">
+    <category-modal ref="modal"></category-modal>
+  </teleport>
 
   <app-confirm ref="removeCategoryDialog" @onConfirm="onRemoveCategory">
     Вы действительно хотите удалить <b>{{ category.name }}</b> ?

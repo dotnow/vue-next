@@ -3,12 +3,25 @@
     header="Детали категории"
     v-model:visible="showModal"
     :style="{ width: '50vw' }"
+    :contentStyle="{ height: '50vh' }"
     :modal="true"
   >
     <div class="p-fluid">
       <div class="p-field">
         <label for="name">Наименование</label>
         <InputText id="name" type="text" v-model="category.name" />
+      </div>
+
+      <div class="p-field p-mb-5">
+        <label for="parentID">Родительский каталог</label>
+        <Dropdown
+          id="parentID"
+          v-model="category.parentID"
+          :options="categories"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Выберите родительскую категорию"
+        />
       </div>
     </div>
 
@@ -22,16 +35,28 @@
 import { computed, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { useCategories } from '@/use/categories'
+import { useStore } from 'vuex'
 
 export default {
   setup() {
     const toast = useToast()
+    const store = useStore()
 
     const showModal = ref(false)
     const category = ref({})
     const isNew = ref(false)
 
     const { addCategory, updateCategory, error } = useCategories()
+
+    const categories = computed(() =>
+      store.getters['categories/all'].filter(
+        el =>
+          el.id !== category.value.id &&
+          !store.getters['categories/getChildrens'](category.value.id).some(
+            ch => ch.id === el.id
+          )
+      )
+    )
 
     const show = item => {
       if (item) {
@@ -40,8 +65,10 @@ export default {
       } else {
         isNew.value = true
         category.value.name = ''
+        category.value.parentID = ''
         delete category.value.id
       }
+
       showModal.value = true
     }
 
@@ -101,7 +128,8 @@ export default {
       show,
       category,
       actionText,
-      onSaveCategory
+      onSaveCategory,
+      categories
     }
   }
 }

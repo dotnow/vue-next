@@ -20,6 +20,9 @@
               categoryByID(product.categoryID).name
             }}</span>
           </div>
+          <div class="p-card-subtitle p-text-center">
+            <span class="product-category">{{ product.announcement }}</span>
+          </div>
           <div class="p-card-title p-text-center">
             {{ formatCurrency(product.price) }}
           </div>

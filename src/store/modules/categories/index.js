@@ -23,6 +23,8 @@ export default {
   getters: {
     all: state => state.categories,
     byID: state => id =>
-      state.categories.find(el => el.id === id) ?? { name: 'Неизвестно' }
+      state.categories.find(el => el.id === id) ?? { name: 'Неизвестно' },
+    getChildrens: state => id =>
+      state.categories.filter(el => el.parentID === id)
   }
 }

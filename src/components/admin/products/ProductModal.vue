@@ -42,15 +42,17 @@
 
         <div class="p-field">
           <label for="categoryID">Категория</label>
-          <Dropdown
-            id="categoryID"
+          <CascadeSelect
             v-model="categoryID"
-            :options="categories"
-            aria-describedby="categoryID-help"
-            :class="{ 'p-invalid': categoryIDError }"
+            :options="categoriesList"
             optionLabel="name"
             optionValue="id"
+            optionGroupLabel="name"
+            :optionGroupChildren="['children']"
+            aria-describedby="categoryID-help"
+            :class="{ 'p-invalid': categoryIDError }"
             placeholder="Выберите категорию"
+            style="width: 14rem"
           />
           <small id="categoryID-help" class="p-error" v-if="categoryIDError">{{
             categoryIDError
@@ -76,7 +78,20 @@
         </div>
 
         <div class="p-field">
-          <label for="description">Описание товара</label>
+          <label for="announcement">Краткое описание товара</label>
+          <div>
+            <Textarea
+              id="announcement"
+              v-model="announcement"
+              :autoResize="true"
+              rows="2"
+              cols="30"
+            />
+          </div>
+        </div>
+
+        <div class="p-field">
+          <label for="description">Детальное описание товара</label>
           <div>
             <Editor
               id="description"
@@ -156,6 +171,23 @@ export default {
     const NAME_MIN_LENGTH = 3
     const NAME_MAX_LENGTH = 20
 
+    const setKeysAndChildren = item => {
+      const children = store.getters['categories/getChildrens'](item.id)
+
+      if (children.length) {
+        item.children = store.getters['categories/getChildrens'](
+          item.id
+        ).map(ch => setKeysAndChildren(ch))
+      }
+      return item
+    }
+
+    const categoriesList = computed(() =>
+      store.getters['categories/all']
+        .filter(el => !el.parentID)
+        .map(el => setKeysAndChildren(el))
+    )
+
     const schema = yup.object({
       name: yup
         .string()
@@ -171,6 +203,7 @@ export default {
       categoryID: yup.string().required('Выберите категорию'),
       imgUrl: yup.string(),
       imgFileName: yup.string(),
+      announcement: yup.string(),
       description: yup.string(),
       price: yup.number(),
       stock: yup.number()
@@ -186,6 +219,7 @@ export default {
     )
     const { value: imgUrlForm } = useField('imgUrl')
     const { value: imgFileNameForm } = useField('imgFileName')
+    const { value: announcement } = useField('announcement')
     const { value: description } = useField('description')
     const { value: price } = useField('price')
     const { value: stock } = useField('stock')
@@ -257,6 +291,7 @@ export default {
         categoryID.value = item['categoryID']
         imgUrlForm.value = item['imgUrl'] ?? ''
         imgFileNameForm.value = item['imgFileName'] ?? ''
+        announcement.value = item['announcement'] ?? ''
         description.value = item['description'] ?? ''
         price.value = item['price']
         stock.value = item['stock']
@@ -266,6 +301,7 @@ export default {
         categoryID.value = ''
         imgUrlForm.value = ''
         imgFileNameForm.value = ''
+        announcement.value = ''
         description.value = ''
         price.value = 0
         stock.value = 0
@@ -280,6 +316,7 @@ export default {
         categoryID: categoryID.value,
         imgUrl: imgUrlForm.value ?? '',
         imgFileName: imgFileNameForm.value ?? '',
+        announcement: announcement.value,
         description: description.value,
         price: price.value,
         stock: stock.value
@@ -344,6 +381,7 @@ export default {
       imgUrlForm,
       imgFileNameForm,
       description,
+      announcement,
       price,
       stock,
       imgUrl,
@@ -356,6 +394,7 @@ export default {
       actionText,
       onSaveProduct,
       onHideDialog,
+      categoriesList,
       categories: computed(() => store.getters['categories/all'])
     }
   }
