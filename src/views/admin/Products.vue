@@ -11,7 +11,7 @@
         label="Удалить"
         icon="pi pi-trash"
         class="p-button-danger"
-        @click="removeProductsDialog.open()"
+        @click="confirmRemoveProducts"
         :disabled="!selectedProducts.length"
       />
     </template>
@@ -134,14 +134,6 @@
   </DataTable>
 
   <product-modal ref="modal"></product-modal>
-
-  <app-confirm ref="removeProductDialog" @onConfirm="onRemoveProduct">
-    Вы действительно хотите удалить <b>{{ product.name }}</b> ?
-  </app-confirm>
-
-  <app-confirm ref="removeProductsDialog" @onConfirm="removeSelectedProducts">
-    Вы действительно хотите удалить выбранные позиции?
-  </app-confirm>
 </template>
 
 <script>
@@ -149,19 +141,17 @@ import { useStore } from 'vuex'
 import { computed, inject, ref } from 'vue'
 import { useProducts } from '@/use/products'
 import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
 import ProductModal from '@/components/admin/products/ProductModal'
-import AppConfirm from '@/components/app/AppConfirm'
 
 export default {
   setup() {
     const store = useStore()
     const toast = useToast()
+    const confirm = useConfirm()
 
     const filters = ref({})
     const modal = ref(null)
-    const removeProductDialog = ref(null)
-    const removeProductsDialog = ref(null)
-    const product = ref({})
     const selectedProducts = ref([])
 
     const { removeProduct, error } = useProducts()
@@ -171,31 +161,51 @@ export default {
     }
 
     const confirmRemoveProduct = item => {
-      product.value = item
-      removeProductDialog.value.open()
+      confirm.require({
+        message: `Вы действительно хотите удалить ${item.name}`,
+        header: 'Подтвердите удаление',
+        acceptLabel: 'Да',
+        rejectLabel: 'Нет',
+        icon: 'pi pi-exclamation-triangle',
+        accept: async () => {
+          await onRemoveProduct(item)
+          toast.add({
+            severity: 'success',
+            summary: 'Успешно',
+            detail: 'Товар удалён',
+            life: 3000
+          })
+        },
+        reject: () => {}
+      })
     }
 
-    const removeSelectedProducts = async () => {
-      for (const item of selectedProducts.value) {
-        await onRemoveProduct(item)
-      }
-      removeProductsDialog.value = false
-      selectedProducts.value = []
+    const confirmRemoveProducts = () => {
+      confirm.require({
+        message: 'Вы действительно хотите удалить выбранные позиции',
+        header: 'Подтвердите удаление',
+        acceptLabel: 'Да',
+        rejectLabel: 'Нет',
+        icon: 'pi pi-exclamation-triangle',
+        accept: async () => {
+          for (const item of selectedProducts.value) {
+            await onRemoveProduct(item)
+          }
+          selectedProducts.value = []
 
-      toast.add({
-        severity: 'success',
-        summary: 'Успешно',
-        detail: 'Товары удалены',
-        life: 3000
+          toast.add({
+            severity: 'success',
+            summary: 'Успешно',
+            detail: 'Товары удалены',
+            life: 3000
+          })
+        },
+        reject: () => {}
       })
     }
 
     const onRemoveProduct = async item => {
-      if (item) {
-        await removeProduct(item)
-      } else {
-        await removeProduct(product.value)
-      }
+      await removeProduct(item)
       if (error.value) {
         toast.add({
           severity: 'error',
@@ -203,17 +213,6 @@ export default {
           detail: 'Ошибка при удалении',
           life: 3000
         })
-      } else if (!item) {
-        toast.add({
-          severity: 'success',
-          summary: 'Успешно',
-          detail: 'Товар удалён',
-          life: 3000
-        })
-      }
-      product.value = {}
-      if (removeProductDialog.value) {
-        removeProductDialog.value = false
       }
     }
     return {
@@ -221,12 +220,9 @@ export default {
       filters,
       onShowModal,
       formatCurrency: inject('formatCurrency'),
-      removeProductDialog,
       confirmRemoveProduct,
-      removeProductsDialog,
-      removeSelectedProducts,
+      confirmRemoveProducts,
       onRemoveProduct,
-      product,
       selectedProducts,
       products: computed(() => store.getters['products/all']),
       categoryByID: computed(() => store.getters['categories/byID']),
@@ -234,6 +230,6 @@ export default {
     }
   },
 
-  components: { ProductModal, AppConfirm }
+  components: { ProductModal }
 }
 </script>

@@ -16,7 +16,7 @@
                   style="max-width: 100px"
                 />
               </div>
-              <div class="p-col-6">
+              <div class="p-col">
                 <div class="p-card-title">
                   {{ product.name }}
                 </div>
@@ -27,8 +27,9 @@
                     categoryByID(product.categoryID).name
                   }}</span>
                 </div>
-                <div class="p-card-title">
-                  {{ formatCurrency(product.price) }}
+
+                <div class="p-card-subtitle">
+                  {{ product.announcement }}
                 </div>
               </div>
             </div>
@@ -40,6 +41,12 @@
               <div>
                 <product-tag :stock="product.stock"></product-tag>
               </div>
+            </div>
+
+            <div class="p-col-12">
+              <h4 class="p-m-0">
+                {{ formatCurrency(product.price) }}
+              </h4>
             </div>
 
             <div class="p-col-12 p-as-end">

@@ -54,7 +54,7 @@ export default {
 
     const categoriesList = computed(() => [
       {
-        key: 'all',
+        key: '',
         name: 'Все',
         children: categories.value.filter(el => !el.parentID)
       }
@@ -62,23 +62,27 @@ export default {
 
     const expandedCategories = computed(() =>
       Object.fromEntries([
-        ['all', true],
+        ['', true],
         ...categories.value.map(el => [[el.id], true])
       ])
     )
 
     const selectCategory = e => {
-      if (filter.value['categoryID']) {
-        filter.value['categoryID'].push(e.key)
-      } else {
-        filter.value['categoryID'] = [e.key]
+      if (e.key) {
+        if (filter.value['categoryID']) {
+          filter.value['categoryID'].push(e.key)
+        } else {
+          filter.value['categoryID'] = [e.key]
+        }
       }
     }
 
     const unselectCategory = e => {
-      filter.value['categoryID'] = filter.value['categoryID'].filter(
-        el => el !== e.key
-      )
+      if (e.key) {
+        filter.value['categoryID'] = filter.value['categoryID'].filter(
+          el => el !== e.key
+        )
+      }
     }
 
     watch(props, () => {

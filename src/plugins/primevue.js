@@ -35,6 +35,7 @@ import Editor from 'primevue/editor'
 import Tree from 'primevue/tree'
 import Textarea from 'primevue/textarea'
 import CascadeSelect from 'primevue/cascadeselect'
+import ConfirmDialog from 'primevue/confirmdialog'
 
 export default {
   install: (app, options) => {
@@ -69,6 +70,7 @@ export default {
       .component('Tree', Tree)
       .component('Textarea', Textarea)
       .component('CascadeSelect', CascadeSelect)
+      .component('ConfirmDialog', ConfirmDialog)
       .directive('badge', BadgeDirective)
   }
 }

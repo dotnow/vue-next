@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "deploy": "yarn build && firebase deploy"
+    "deploy": "git add . && git commit -S -m \"deploy\" && git push && yarn build && firebase deploy"
   },
   "dependencies": {
     "core-js": "^3.6.5",

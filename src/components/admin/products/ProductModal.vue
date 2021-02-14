@@ -141,17 +141,20 @@
 </template>
 
 <script>
-import { computed, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useToast } from 'primevue/usetoast'
 import { useProducts } from '@/use/products'
 import { useForm, useField } from 'vee-validate'
+import { onBeforeRouteLeave } from 'vue-router'
+import { useConfirm } from 'primevue/useconfirm'
 import * as yup from 'yup'
 
 export default {
   setup() {
     const store = useStore()
     const toast = useToast()
+    const confirm = useConfirm()
     const {
       uploadFile,
       removeFile,
@@ -167,6 +170,7 @@ export default {
     const id = ref('')
     const isNew = ref(false)
     const productSaved = ref(false)
+    const initialItem = reactive({})
 
     const NAME_MIN_LENGTH = 3
     const NAME_MAX_LENGTH = 20
@@ -242,6 +246,28 @@ export default {
       })
     })
 
+    onBeforeRouteLeave((_, from, next) => {
+      if (hasDifference.value) {
+        confirm.require({
+          message:
+            'У вас есть несохранённые изменения. Вы действительно хотите покинуть страницу?',
+          header: 'Подтверждение',
+          acceptLabel: 'Да',
+          rejectLabel: 'Нет',
+          icon: 'pi pi-exclamation-triangle',
+          accept: async () => {
+            await onHideDialog()
+            next()
+          },
+          reject: () => {
+            next(false)
+          }
+        })
+      } else {
+        next()
+      }
+    })
+
     const onHideDialog = async () => {
       if (isNew.value && imgFileNameForm.value && !productSaved.value) {
         await imageRemove()
@@ -306,8 +332,35 @@ export default {
         price.value = 0
         stock.value = 0
       }
+
+      initialItem.name = name.value
+      initialItem.categoryID = categoryID.value
+      initialItem.imgUrl = imgUrlForm.value
+      initialItem.imgFileName = imgFileNameForm.value
+      initialItem.announcement = announcement.value
+      initialItem.description = description.value
+      initialItem.price = price.value
+      initialItem.stock = stock.value
+
       showModal.value = true
     }
+
+    const hasDifference = computed(() => {
+      if (
+        initialItem.name !== name.value ||
+        initialItem.categoryID !== categoryID.value ||
+        initialItem.imgUrl !== imgUrlForm.value ||
+        initialItem.imgFileName !== imgFileNameForm.value ||
+        initialItem.announcement !== announcement.value ||
+        initialItem.description !== description.value ||
+        initialItem.price !== price.value ||
+        initialItem.stock !== stock.value
+      ) {
+        return true
+      } else {
+        return false
+      }
+    })
 
     const onSaveProduct = async () => {
       const product = {

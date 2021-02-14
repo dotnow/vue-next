@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { computed, ref, reactive, toRefs } from 'vue'
+import { computed, ref, reactive, toRefs, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import ProductGridCard from '@/components/product/ProductGridCard'
 import ProductListCard from '@/components/product/ProductListCard'
@@ -66,8 +66,16 @@ export default {
 
   setup(props) {
     const store = useStore()
-    const layout = ref('grid')
+    const layout = ref(null)
     const filter = reactive({})
+
+    onMounted(() => {
+      layout.value = store.getters.layout
+    })
+
+    watch(layout, () => {
+      store.commit('SWITCH_LAYOUT', layout.value)
+    })
 
     const categoryByID = computed(() => store.getters['categories/byID'])
 
@@ -75,8 +83,7 @@ export default {
       store.getters['products/all']
         .filter(el =>
           filter['categoryID'] && filter['categoryID'].length
-            ? filter['categoryID'].includes('all') ||
-              filter['categoryID'].includes(el.categoryID) ||
+            ? filter['categoryID'].includes(el.categoryID) ||
               filter['categoryID'].includes(
                 categoryByID.value(el.categoryID).parentID
               )

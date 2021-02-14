@@ -11,7 +11,7 @@
         label="Удалить"
         icon="pi pi-trash"
         class="p-button-danger"
-        @click="removeCategoriesDialog.open()"
+        @click="confirmRemoveCategories"
         :disabled="!selectedCategories.length"
       />
     </template>
@@ -85,17 +85,6 @@
   <teleport to="body">
     <category-modal ref="modal"></category-modal>
   </teleport>
-
-  <app-confirm ref="removeCategoryDialog" @onConfirm="onRemoveCategory">
-    Вы действительно хотите удалить <b>{{ category.name }}</b> ?
-  </app-confirm>
-
-  <app-confirm
-    ref="removeCategoriesDialog"
-    @onConfirm="removeSelectedCategories"
-  >
-    Вы действительно хотите удалить выбранные позиции?
-  </app-confirm>
 </template>
 
 <script>
@@ -103,19 +92,18 @@ import { useStore } from 'vuex'
 import { computed, ref } from 'vue'
 import { useCategories } from '@/use/categories'
 import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
 import CategoryModal from '@/components/admin/categories/CategoryModal'
-import AppConfirm from '@/components/app/AppConfirm'
 
 export default {
   setup() {
     const store = useStore()
     const toast = useToast()
+    const confirm = useConfirm()
 
     const modal = ref(null)
 
     const filters = ref({})
-    const removeCategoryDialog = ref(null)
-    const removeCategoriesDialog = ref(null)
     const category = ref({})
     const selectedCategories = ref([])
 
@@ -129,22 +117,40 @@ export default {
 
     const confirmRemoveCategory = item => {
       category.value = item
-      removeCategoryDialog.value.open()
+      confirm.require({
+        message: `Вы действительно хотите удалить ${category.value.name}`,
+        header: 'Подтвердите удаление',
+        acceptLabel: 'Да',
+        rejectLabel: 'Нет',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          onRemoveCategory()
+        },
+        reject: () => {}
+      })
     }
 
-    const removeSelectedCategories = async () => {
-      for (const item of selectedCategories.value) {
-        await onRemoveCategory(item.id)
-      }
+    const confirmRemoveCategories = () => {
+      confirm.require({
+        message: 'Вы действительно хотите удалить выбранные позиции?',
+        header: 'Подтвердите удаление',
+        acceptLabel: 'Да',
+        rejectLabel: 'Нет',
+        icon: 'pi pi-exclamation-triangle',
+        accept: async () => {
+          for (const item of selectedCategories.value) {
+            await onRemoveCategory(item.id)
+          }
 
-      removeCategoriesDialog.value = false
-      selectedCategories.value = []
-
-      toast.add({
-        severity: 'success',
-        summary: 'Успешно',
-        detail: 'Категории удалены',
-        life: 3000
+          selectedCategories.value = []
+          toast.add({
+            severity: 'success',
+            summary: 'Успешно',
+            detail: 'Категории удалены',
+            life: 3000
+          })
+        },
+        reject: () => {}
       })
     }
 
@@ -183,26 +189,21 @@ export default {
         })
       }
       category.value = {}
-      if (removeCategoryDialog.value) {
-        removeCategoryDialog.value = false
-      }
     }
+
     return {
-      removeCategoryDialog,
-      removeCategoriesDialog,
       confirmRemoveCategory,
-      removeSelectedCategories,
+      confirmRemoveCategories,
       category,
       selectedCategories,
       onShowModal,
       modal,
       filters,
-      onRemoveCategory,
       haveProducts,
       categories: computed(() => store.getters['categories/all'])
     }
   },
 
-  components: { CategoryModal, AppConfirm }
+  components: { CategoryModal }
 }
 </script>

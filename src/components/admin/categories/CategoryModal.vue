@@ -49,24 +49,25 @@ export default {
     const { addCategory, updateCategory, error } = useCategories()
 
     const categories = computed(() =>
-      store.getters['categories/all'].filter(
-        el =>
-          el.id !== category.value.id &&
-          !store.getters['categories/getChildrens'](category.value.id).some(
-            ch => ch.id === el.id
-          )
+      store.getters['categories/all'].filter(el =>
+        category.value.id
+          ? el.id !== category.value.id &&
+            !store.getters['categories/getChildrens'](category.value.id).some(
+              ch => ch.id === el.id
+            )
+          : el
       )
     )
 
     const show = item => {
       if (item) {
         isNew.value = false
-        category.value = item
+        category.value = JSON.parse(JSON.stringify(item))
       } else {
         isNew.value = true
+        delete category.value.id
         category.value.name = ''
         category.value.parentID = ''
-        delete category.value.id
       }
 
       showModal.value = true
