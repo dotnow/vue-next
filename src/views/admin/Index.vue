@@ -16,6 +16,11 @@ export default {
         label: 'Товары',
         icon: 'pi pi-file',
         to: '/admin/products'
+      },
+      {
+        label: 'Заказы',
+        icon: 'pi pi-file',
+        to: '/admin/orders'
       }
     ]
     return {

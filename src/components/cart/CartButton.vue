@@ -1,14 +1,13 @@
 <template>
   <cart-input
-    v-if="incart"
-    :amount="incart[1]"
-    :id="product.id"
-    :max="product.stock"
+    v-if="incart && !incart.promo"
+    :amount="incart.amount"
+    :product="product"
   ></cart-input>
   <Button
     :label="product.stock ? label : 'Нет в наличии'"
     icon="pi pi-shopping-cart"
-    @click="addToCart(product.id)"
+    @click="addToCart"
     v-else
     :disabled="!product.stock"
   ></Button>
@@ -36,9 +35,13 @@ export default {
   setup(props) {
     const { setCartItem } = useCart()
 
-    const addToCart = async id => {
+    const addToCart = async () => {
       if (props.product.stock) {
-        await setCartItem({ id, value: 1 })
+        await setCartItem({
+          id: props.product.id,
+          amount: 1,
+          price: props.product.price
+        })
       }
     }
 

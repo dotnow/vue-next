@@ -1,29 +1,62 @@
 export default {
   state: {
-    cart: {}
+    cart: [],
+    promocodes: []
   },
 
   mutations: {
     SET_CART: (state, payload) => (state.cart = payload),
 
-    CART_SET_ITEM: (state, payload) => {
-      if (!state.cart) {
-        state.cart = {
-          [payload.id]: payload.value
-        }
-      } else {
-        state.cart[payload.id] = payload.value
+    SET_PROMOCODES: (state, payload) =>
+      (state.promocodes = Object.values(payload)),
+
+    PROMOCODE_ADD: (state, payload) => state.promocodes.push(payload),
+
+    PROMOCODE_UPDATE: (state, payload) => {
+      const index = state.promocodes.findIndex(el => el.id === payload.id)
+
+      if (index !== -1) {
+        state.promocodes[index] = payload
       }
     },
 
-    CART_REMOVE_ITEM: (state, payload) => delete state.cart[payload]
+    PROMOCODE_REMOVE: (state, payload) =>
+      (state.promocodes = state.promocodes.filter(el => el !== payload)),
+
+    CART_SET_ITEM: (state, payload) => {
+      const index = state.cart.findIndex(el => el.id === payload.id)
+
+      if (index !== -1) {
+        state.cart[index] = payload
+      } else {
+        state.cart.push(payload)
+      }
+    },
+
+    CART_REMOVE_ITEM: (state, payload) =>
+      (state.cart = state.cart.filter(el => el.id !== payload))
   },
 
   actions: {},
 
   getters: {
-    cart: state => (state.cart ? Object.entries(state.cart) : []),
+    cart: state => state.cart,
+    promocodes: state => state.promocodes,
     cartTotalAmount: (state, getters) =>
-      getters.cart.reduce((acc, cur) => (acc += cur[1]), 0)
+      getters.cart.reduce((acc, cur) => (acc += cur.amount), 0),
+    cartDiscount: (state, getters, rootState, rootGetters) =>
+      state.promocodes.reduce((acc, cur) => {
+        const promocode = rootGetters['promocodes/byID'](cur)
+        if (promocode && promocode.type === 2) {
+          acc += promocode.value
+        }
+        return acc
+      }, 0),
+    cartTotalSum: (state, getters) => {
+      const sum =
+        getters.cart.reduce((acc, cur) => (acc += cur.price * cur.amount), 0) -
+        getters.cartDiscount
+      return Math.min(Math.max(sum, 0), Number.MAX_SAFE_INTEGER)
+    }
   }
 }

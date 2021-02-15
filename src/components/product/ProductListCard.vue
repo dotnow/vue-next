@@ -78,7 +78,7 @@ export default {
     const cart = computed(() => store.getters['cart/cart'])
 
     const inCart = computed(() =>
-      cart.value.find(([key]) => key === props.product.id)
+      cart.value.find(el => el.id === props.product.id)
     )
 
     return {

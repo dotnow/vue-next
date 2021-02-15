@@ -48,6 +48,16 @@ const routes = [
     }
   },
   {
+    path: '/order',
+    name: 'order',
+    component: () => import('@/views/Order'),
+    beforeEnter: requireAuth,
+    meta: {
+      layout: 'main',
+      title: 'Оформление заказа'
+    }
+  },
+  {
     path: '/auth',
     name: 'auth',
     component: Auth,
@@ -76,6 +86,11 @@ const routes = [
         path: 'categories',
         name: 'admin-categories',
         component: () => import('@/views/admin/Categories')
+      },
+      {
+        path: 'orders',
+        name: 'admin-orders',
+        component: () => import('@/views/admin/Orders')
       }
     ]
   }

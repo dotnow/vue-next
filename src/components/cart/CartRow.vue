@@ -1,5 +1,5 @@
 <template>
-  <tr draggable="false">
+  <tr draggable="false" v-if="product">
     <td class="p-text-center" v-if="product.imgUrl">
       <img :src="product.imgUrl" :alt="product.name" style="max-width: 50px" />
     </td>
@@ -14,16 +14,17 @@
     </router-link>
     <td class="p-text-center">
       <cart-input
-        :amount="item[1]"
-        :id="item[0]"
-        :max="product.stock"
+        :amount="item.amount"
+        :product="product"
+        v-if="!item.promo"
       ></cart-input>
     </td>
     <td class="p-text-right">
-      {{ formatCurrency(item[1] * product.price) }}
+      {{ formatCurrency(item.amount * item.price) }}
     </td>
     <td class="p-text-center">
       <Button
+        v-if="item.price"
         icon="pi pi-times"
         class="p-button-rounded p-button-danger p-button-text"
         @click="removeCartItem"
@@ -37,7 +38,7 @@ import { computed, toRefs, inject } from 'vue'
 import { useStore } from 'vuex'
 import { useCart } from '@/use/cart'
 import { useToast } from 'primevue/usetoast'
-import CartInput from '@/components/cart/CartInput.vue'
+import CartInput from '@/components/cart/CartInput'
 
 export default {
   props: {
@@ -53,11 +54,11 @@ export default {
     const { setCartItem, error } = useCart()
 
     const product = computed(() =>
-      store.getters['products/byID'](props.item[0])
+      store.getters['products/byID'](props.item.id)
     )
 
     const removeCartItem = async () => {
-      await setCartItem({ id: props.item[0], amount: 0 })
+      await setCartItem({ id: props.item.id, amount: 0 })
 
       if (error.value) {
         toast.add({
@@ -87,5 +88,3 @@ export default {
   components: { CartInput }
 }
 </script>
-
-<style></style>

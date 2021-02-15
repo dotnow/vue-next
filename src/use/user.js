@@ -1,4 +1,4 @@
-import { dbService, attachCart } from '@/plugins/firebase'
+import { dbService, attachCart, attachOrders } from '@/plugins/firebase'
 import { useCart } from '@/use/cart'
 import store from '@/store'
 
@@ -23,8 +23,16 @@ export const useUser = () => {
       }
 
       attachCart(user.uid)
+
+      if (profile.role === 'admin') {
+        attachOrders()
+      } else {
+        attachOrders(user.uid)
+      }
     } else {
-      store.commit('cart/SET_CART', useCart().getLocalCart())
+      const cart = useCart().getLocalCart()
+      store.commit('cart/SET_CART', cart.items)
+      store.commit('cart/SET_PROMOCODES', cart.promocodes)
     }
   }
   return { fetchUser }

@@ -27,7 +27,8 @@ export default {
       state.products.sort((a, b) =>
         a.stock < b.stock ? 1 : a.stock > b.stock ? -1 : 0
       ),
-    byID: state => id => state.products.find(el => el.id === id),
+    byID: state => id =>
+      state.products.find(el => el.id === id.replace('-promo', '')),
 
     byCategoryID: state => categoryID =>
       state.products.filter(el => el.categoryID === categoryID)

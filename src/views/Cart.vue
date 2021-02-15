@@ -26,10 +26,34 @@
             </tr>
           </thead>
           <tbody class="p-datatable-tbody">
-            <cart-row v-for="item in cartItems" :key="item[0]" :item="item">
-            </cart-row>
+            <template v-for="cartItem in cartItems" :key="cartItem.id">
+              <cart-row :item="cartItem"></cart-row>
+            </template>
           </tbody>
         </table>
+      </div>
+      <div class="p-datatable-footer p-grid p-jc-end">
+        <div class="p-grid p-ai-end vertical-container">
+          <div class="p-col">
+            <Chip
+              class="p-m-2"
+              :label="el"
+              v-for="el in inCartPromocodes"
+              :key="`promocode_${el}`"
+            />
+          </div>
+        </div>
+        <div class="p-col-3">
+          <label for="promocode">Промокод</label>
+          <div class="p-inputgroup">
+            <InputMask id="promocode" mask="***-***-***" v-model="promocode" />
+            <Button
+              label="Применить"
+              @click="onEnterPromocode"
+              :disabled="isPromocodeButtonDisabled"
+            />
+          </div>
+        </div>
       </div>
       <div class="p-datatable-footer">
         <div style="text-align: right">
@@ -38,42 +62,101 @@
       </div>
     </div>
     <div class="p-text-center">
+      <div v-if="isAuth">
+        <Button
+          icon="pi pi-credit-card"
+          label="Перейти к оформлению заказа"
+          @click="onOrder"
+        ></Button>
+      </div>
       <Button
-        class="p-button-lg"
-        icon="pi pi-credit-card"
-        label="Оплатить"
-      ></Button>
+        v-else
+        label="Войдите в систему для оформления заказа"
+        @click="displayAuthModal"
+      >
+      </Button>
     </div>
   </div>
   <app-empty v-else>Нет элементов для отображения</app-empty>
 </template>
 
 <script>
+import { ref, inject, computed } from 'vue'
 import { useStore } from 'vuex'
-import { computed, inject } from 'vue'
+import { useRouter } from 'vue-router'
+import { useCart } from '@/use/cart'
+import { useToast } from 'primevue/usetoast'
 import CartRow from '@/components/cart/CartRow'
 
 export default {
   setup() {
     const store = useStore()
+    const router = useRouter()
+    const toast = useToast()
 
-    const product = computed(() => store.getters['products/byID'])
-    const cartItems = computed(() => store.getters['cart/cart'])
-    const cartTotalSum = computed(() =>
-      cartItems.value.reduce(
-        (acc, cur) =>
-          product.value(cur[0])
-            ? acc + product.value(cur[0]).price * cur[1]
-            : acc,
-        0
-      )
-    )
+    const promocode = ref('')
+    const { applyPromocode, error } = useCart()
 
+    const promocodeByID = computed(() => store.getters['promocodes/byID'])
+    const inCartPromocodes = computed(() => store.getters['cart/promocodes'])
+
+    const onOrder = () => {
+      router.push('/order')
+    }
+
+    const displayAuthModal = () => store.commit('SET_AUTH_MODAL', true)
+
+    const onEnterPromocode = async () => {
+      if (!promocodeByID.value(promocode.value)) {
+        toast.add({
+          severity: 'error',
+          summary: 'Ошибка',
+          detail: 'Промокод не найден',
+          life: 3000
+        })
+        return
+      } else if (inCartPromocodes.value.includes(promocode.value)) {
+        toast.add({
+          severity: 'error',
+          summary: 'Ошибка',
+          detail: 'Вы уже применили этот промокод',
+          life: 3000
+        })
+        promocode.value = ''
+        return
+      } else {
+        await applyPromocode(promocode.value)
+        if (!error.value) {
+          toast.add({
+            severity: 'success',
+            summary: 'Успешно',
+            detail: 'Промокод применён',
+            life: 3000
+          })
+          promocode.value = ''
+        } else {
+          toast.add({
+            severity: 'error',
+            summary: 'Ошибка',
+            detail: error.value,
+            life: 3000
+          })
+        }
+      }
+    }
     return {
-      cartItems,
+      promocode,
+      isPromocodeButtonDisabled: computed(
+        () => promocode.value.replace('_', '').length !== 11
+      ),
+      inCartPromocodes,
+      onEnterPromocode,
+      onOrder,
+      cartItems: computed(() => store.getters['cart/cart']),
+      cartTotalSum: computed(() => store.getters['cart/cartTotalSum']),
       formatCurrency: inject('formatCurrency'),
-      product,
-      cartTotalSum
+      isAuth: computed(() => store.getters.isAuth),
+      displayAuthModal
     }
   },
 

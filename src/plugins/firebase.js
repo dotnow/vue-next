@@ -3,6 +3,7 @@ import 'firebase/auth'
 import 'firebase/database'
 import 'firebase/storage'
 import store from '@/store'
+import { useCart } from '@/use/cart'
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -44,55 +45,109 @@ const appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
 //   return arr
 // }
 
+// Товары
 const productsRef = dbService.ref('products')
 
-productsRef.on('child_added', async data => {
+productsRef.on('child_added', data => {
   store.commit('products/PRODUCT_ADD', { id: data.key, ...data.val() })
 })
 
-productsRef.on('child_changed', async data => {
+productsRef.on('child_changed', data => {
   store.commit('products/PRODUCT_UPDATE', { id: data.key, ...data.val() })
 })
 
-productsRef.on('child_removed', async data =>
+productsRef.on('child_removed', data =>
   store.commit('products/PRODUCT_REMOVE', data.key)
 )
 
+// Категории
 const categoriesRef = dbService.ref('categories')
 
-categoriesRef.on('child_added', async data => {
+categoriesRef.on('child_added', data => {
   store.commit('categories/CATEGORY_ADD', { id: data.key, ...data.val() })
 })
 
-categoriesRef.on('child_changed', async data => {
+categoriesRef.on('child_changed', data => {
   store.commit('categories/CATEGORY_UPDATE', { id: data.key, ...data.val() })
 })
 
-categoriesRef.on('child_removed', async data =>
+categoriesRef.on('child_removed', data =>
   store.commit('categories/CATEGORY_REMOVE', data.key)
 )
 
+// Заказы
+let ordersRef = dbService.ref('orders')
+
+const attachOrders = (uid = null) => {
+  ordersRef.on('child_added', data => {
+    if (!uid || (uid && data.val().userID === uid)) {
+      store.commit('orders/ORDER_ADD', { id: data.key, ...data.val() })
+    }
+  })
+
+  ordersRef.on('child_changed', data => {
+    store.commit('orders/ORDER_UPDATE', { id: data.key, ...data.val() })
+  })
+
+  ordersRef.on('child_removed', data =>
+    store.commit('orders/ORDER_REMOVE', data.key)
+  )
+}
+
+// Промокоды
+const promocodesRef = dbService.ref('promocodes')
+
+promocodesRef.on('child_added', data => {
+  store.commit('promocodes/PROMOCODE_ADD', { id: data.key, ...data.val() })
+})
+
+promocodesRef.on('child_changed', data => {
+  store.commit('promocodes/PROMOCODE_UPDATE', { id: data.key, ...data.val() })
+})
+
+promocodesRef.on('child_removed', data =>
+  store.commit('promocodes/PROMOCODE_REMOVE', data.key)
+)
+
+// Корзина
 let cartRef = null
 
 const attachCart = uid => {
   cartRef = dbService.ref(`carts/${uid}`)
 
-  cartRef.on('child_added', async data => {
-    store.commit('cart/CART_SET_ITEM', { id: data.key, value: data.val() })
-  })
-
-  cartRef.on('child_changed', async data => {
-    const value = data.val()
-    if (!value) {
-      data.ref.remove()
-    } else {
-      store.commit('cart/CART_SET_ITEM', { id: data.key, value: data.val() })
+  cartRef.once('value').then(snapshot => {
+    if (!snapshot.exists()) {
+      useCart().transferCart()
     }
   })
 
-  cartRef.on('child_removed', async data =>
-    store.commit('cart/CART_REMOVE_ITEM', data.key)
-  )
+  cartRef.on('child_added', async data => {
+    if (data.key === 'promocodes') {
+      store.commit('cart/SET_PROMOCODES', data.val())
+    } else {
+      store.commit('cart/CART_SET_ITEM', { id: data.key, ...data.val() })
+    }
+  })
+
+  cartRef.on('child_changed', async data => {
+    if (data.key === 'promocodes') {
+      store.commit('cart/SET_PROMOCODES', data.val())
+    } else {
+      if (!data.val().amount) {
+        data.ref.remove()
+      } else {
+        store.commit('cart/CART_SET_ITEM', { id: data.key, ...data.val() })
+      }
+    }
+  })
+
+  cartRef.on('child_removed', async data => {
+    if (data.key === 'promocodes') {
+      store.commit('cart/SET_PROMOCODES', [])
+    } else {
+      store.commit('cart/CART_REMOVE_ITEM', data.key)
+    }
+  })
 }
 
 const detachCart = () => {
@@ -106,7 +161,10 @@ export {
   appVerifier,
   productsRef,
   categoriesRef,
+  ordersRef,
   imagesRef,
+  promocodesRef,
+  attachOrders,
   attachCart,
   detachCart,
   cartRef

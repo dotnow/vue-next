@@ -7,7 +7,7 @@
     :decrementButtonClass="isLastAmount ? 'p-button-danger' : ''"
     incrementButtonIcon="pi pi-plus"
     :decrementButtonIcon="isLastAmount ? 'pi pi-times' : 'pi pi-minus'"
-    :max="max"
+    :max="product.stock"
     @input="e => changeCartItemAmount(e.value)"
   />
 </template>
@@ -18,15 +18,11 @@ import { useCart } from '@/use/cart'
 
 export default {
   props: {
-    id: {
-      type: String,
+    product: {
+      type: Object,
       required: true
     },
     amount: {
-      type: Number,
-      required: true
-    },
-    max: {
       type: Number,
       required: true
     }
@@ -36,10 +32,14 @@ export default {
     const { setCartItem } = useCart()
 
     const changeCartItemAmount = async amount => {
-      if (amount > props.max) {
-        amount = props.max
+      if (amount > props.product.stock) {
+        amount = props.product.stock
       }
-      await setCartItem({ id: props.id, amount })
+      await setCartItem({
+        id: props.product.id,
+        amount,
+        price: props.product.price
+      })
     }
 
     return {

@@ -96,7 +96,7 @@ export default {
       store.getters['products/byID'](route.params.id)
     )
     const inCart = computed(() =>
-      cart.value.find(([key]) => key === product.value.id)
+      cart.value.find(el => el.id === product.value.id)
     )
 
     const sameProducts = computed(() =>
