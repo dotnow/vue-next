@@ -22,12 +22,17 @@
     ></Column>
     <Column header="Дата создания">
       <template #body="slotProps">
-        {{ new Date(slotProps.data.date).toLocaleString() }}
+        {{ new Date(slotProps.data.timestamp).toLocaleString() }}
+      </template>
+    </Column>
+    <Column header="Статус">
+      <template #body="slotProps">
+        <order-status :type="slotProps.data.status"></order-status>
       </template>
     </Column>
     <Column header="Пользователь">
       <template #body="slotProps">
-        {{ slotProps.data.userID }}
+        {{ slotProps.data.firstName + ' ' + slotProps.data.lastName }}
       </template>
     </Column>
     <Column header="Сумма">
@@ -35,21 +40,21 @@
         {{ slotProps.data.sum }}
       </template>
     </Column>
-    <Column header="Тип оплаты">
+    <!-- <Column header="Тип оплаты">
       <template #body="slotProps">
         {{ slotProps.data.payType }}
       </template>
-    </Column>
+    </Column> -->
     <Column header="Оплачено">
       <template #body="slotProps">
         {{ slotProps.data.payedSum }}
       </template>
     </Column>
-    <Column header="Доставка">
+    <!-- <Column header="Доставка">
       <template #body="slotProps">
         {{ slotProps.data.deliveryType }}
       </template>
-    </Column>
+    </Column> -->
     <Column :exportable="false" headerStyle="width: 100px">
       <template #body="slotProps">
         <Button
@@ -73,6 +78,7 @@ import { computed, ref } from 'vue'
 // import { useToast } from 'primevue/usetoast'
 // import { useConfirm } from 'primevue/useconfirm'
 import OrderModal from '@/components/admin/orders/OrderModal'
+import OrderStatus from '@/components/order/OrderStatus'
 
 export default {
   setup() {
@@ -98,6 +104,6 @@ export default {
     }
   },
 
-  components: { OrderModal }
+  components: { OrderModal, OrderStatus }
 }
 </script>

@@ -11,16 +11,16 @@
         <template v-slot:content>
           <div class="p-fluid">
             <div class="p-field">
-              <label for="firstname">Имя</label>
-              <InputText id="firstname" v-model.trim="firstname" />
-              <small v-show="validationErrors.firstname" class="p-error"
+              <label for="firstName">Имя</label>
+              <InputText id="firstName" v-model.trim="firstName" />
+              <small v-show="validationErrors.firstName" class="p-error"
                 >Заполните поле</small
               >
             </div>
             <div class="p-field">
-              <label for="lastname">Фамилия</label>
-              <InputText id="lastname" v-model.trim="lastname" />
-              <small v-show="validationErrors.lastname" class="p-error"
+              <label for="lastName">Фамилия</label>
+              <InputText id="lastName" v-model.trim="lastName" />
+              <small v-show="validationErrors.lastName" class="p-error"
                 >Заполните поле</small
               >
             </div>
@@ -62,8 +62,8 @@ export default {
     const store = useStore()
     const { addOrder, newOrderID, error } = useOrders()
 
-    const firstname = ref('')
-    const lastname = ref('')
+    const firstName = ref('')
+    const lastName = ref('')
     const validationErrors = reactive({})
 
     const user = computed(() => store.getters.user)
@@ -71,11 +71,11 @@ export default {
     const cartTotalSum = computed(() => store.getters['cart/cartTotalSum'])
 
     const validateForm = () => {
-      if (!firstname.value) validationErrors['firstname'] = true
-      else delete validationErrors['firstname']
+      if (!firstName.value) validationErrors['firstName'] = true
+      else delete validationErrors['firstName']
 
-      if (!lastname.value) validationErrors['lastname'] = true
-      else delete validationErrors['lastname']
+      if (!lastName.value) validationErrors['lastName'] = true
+      else delete validationErrors['lastName']
 
       return !Object.keys(validationErrors).length
     }
@@ -84,9 +84,10 @@ export default {
       if (validateForm()) {
         await addOrder({
           timestamp: Date.now(),
+          status: 0,
           userID: user.value.uid,
-          firstname: firstname.value,
-          lastname: lastname.value,
+          firstName: firstName.value,
+          lastName: lastName.value,
           phoneNumber: user.value.phoneNumber,
           items: store.getters['cart/cart'],
           promocodes: store.getters['cart/promocodes'],
@@ -105,8 +106,8 @@ export default {
 
     return {
       cartItems,
-      firstname,
-      lastname,
+      firstName,
+      lastName,
       newOrderID,
       cartTotalSum,
       validationErrors,
@@ -115,11 +116,11 @@ export default {
   }
   // methods: {
   //   validateForm() {
-  //     if (!this.firstname.trim()) this.validationErrors['firstname'] = true
-  //     else delete this.validationErrors['firstname']
+  //     if (!this.firstName.trim()) this.validationErrors['firstName'] = true
+  //     else delete this.validationErrors['firstName']
 
-  //     if (!this.lastname.trim()) this.validationErrors['lastname'] = true
-  //     else delete this.validationErrors['lastname']
+  //     if (!this.lastName.trim()) this.validationErrors['lastName'] = true
+  //     else delete this.validationErrors['lastName']
 
   //     return !Object.keys(this.validationErrors).length
   //   }
