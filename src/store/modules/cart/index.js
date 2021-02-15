@@ -42,20 +42,27 @@ export default {
   getters: {
     cart: state => state.cart,
     promocodes: state => state.promocodes,
+    cartSum: (state, getters) =>
+      getters.cart.reduce((acc, cur) => (acc += cur.price * cur.amount), 0),
     cartTotalAmount: (state, getters) =>
       getters.cart.reduce((acc, cur) => (acc += cur.amount), 0),
     cartDiscount: (state, getters, rootState, rootGetters) =>
       state.promocodes.reduce((acc, cur) => {
         const promocode = rootGetters['promocodes/byID'](cur)
+        if (
+          promocode &&
+          promocode.type === 0 &&
+          getters.cartSum >= promocode.condition
+        ) {
+          acc += (getters.cartSum * promocode.value) / 100
+        }
         if (promocode && promocode.type === 2) {
           acc += promocode.value
         }
         return acc
       }, 0),
     cartTotalSum: (state, getters) => {
-      const sum =
-        getters.cart.reduce((acc, cur) => (acc += cur.price * cur.amount), 0) -
-        getters.cartDiscount
+      const sum = getters.cartSum - getters.cartDiscount
       return Math.min(Math.max(sum, 0), Number.MAX_SAFE_INTEGER)
     }
   }

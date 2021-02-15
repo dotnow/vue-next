@@ -8,10 +8,7 @@ import 'primeflex/primeflex.css'
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
 import Toast from 'primevue/toast'
-import ConfirmPopup from 'primevue/confirmpopup'
 import Menu from 'primevue/menu'
-import Menubar from 'primevue/menubar'
-import Sidebar from 'primevue/sidebar'
 import Button from 'primevue/button'
 import Dropdown from 'primevue/dropdown'
 import BadgeDirective from 'primevue/badgedirective'
@@ -36,7 +33,6 @@ import Tree from 'primevue/tree'
 import Textarea from 'primevue/textarea'
 import CascadeSelect from 'primevue/cascadeselect'
 import ConfirmDialog from 'primevue/confirmdialog'
-import Steps from 'primevue/steps'
 import Chip from 'primevue/chip'
 
 export default {
@@ -49,14 +45,11 @@ export default {
       .component('InputMask', InputMask)
       .component('InputNumber', InputNumber)
       .component('InputText', InputText)
-      .component('Menubar', Menubar)
       .component('Menu', Menu)
-      .component('Sidebar', Sidebar)
       .component('Button', Button)
       .component('Dialog', Dialog)
       .component('Dropdown', Dropdown)
       .component('Toast', Toast)
-      .component('ConfirmPopup', ConfirmPopup)
       .component('DataTable', DataTable)
       .component('Column', Column)
       .component('TabMenu', TabMenu)
@@ -73,7 +66,6 @@ export default {
       .component('Textarea', Textarea)
       .component('CascadeSelect', CascadeSelect)
       .component('ConfirmDialog', ConfirmDialog)
-      .component('Steps', Steps)
       .component('Chip', Chip)
       .directive('badge', BadgeDirective)
   }

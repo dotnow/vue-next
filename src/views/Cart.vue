@@ -32,6 +32,24 @@
           </tbody>
         </table>
       </div>
+      <div class="p-col-12 p-text-right">
+        <InlineMessage severity="info"
+          ><b>123-123-123</b> – Скидка 10%, если сумма товаров в корзине больше
+          500 ₽</InlineMessage
+        >
+      </div>
+      <div class="p-col-12 p-text-right">
+        <InlineMessage severity="info"
+          ><b>222-222-222</b> – Добавляет товар `Укроп` в корзину в качестве
+          подарка</InlineMessage
+        >
+      </div>
+      <div class="p-col-12 p-text-right">
+        <InlineMessage severity="info"
+          ><b>333-333-333</b> – Фиксированная скидка 200 ₽ на общую сумму
+          корзины</InlineMessage
+        >
+      </div>
       <div class="p-datatable-footer p-grid p-jc-end">
         <div class="p-grid p-ai-end vertical-container">
           <div class="p-col">
@@ -56,6 +74,9 @@
         </div>
       </div>
       <div class="p-datatable-footer">
+        <div style="text-align: right" v-if="cartDiscount">
+          Скидка: -{{ formatCurrency(cartDiscount) }}
+        </div>
         <div style="text-align: right">
           Всего: {{ formatCurrency(cartTotalSum) }}
         </div>
@@ -154,6 +175,7 @@ export default {
       onOrder,
       cartItems: computed(() => store.getters['cart/cart']),
       cartTotalSum: computed(() => store.getters['cart/cartTotalSum']),
+      cartDiscount: computed(() => store.getters['cart/cartDiscount']),
       formatCurrency: inject('formatCurrency'),
       isAuth: computed(() => store.getters.isAuth),
       displayAuthModal
