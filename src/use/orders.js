@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { ordersRef } from '@/plugins/firebase'
+import { ordersRef, productsRef } from '@/plugins/firebase'
 import { useCart } from '@/use/cart'
 
 export const useOrders = () => {
@@ -14,6 +14,15 @@ export const useOrders = () => {
       const newOrderRef = await ordersRef.push()
       newOrderID.value = newOrderRef.key
       await newOrderRef.set(order)
+
+      for (const item of order.items) {
+        productsRef.child(item.id).transaction(el => {
+          if (el && el.stock) {
+            el.stock--
+          }
+          return el
+        })
+      }
       await useCart().clearCart()
       error.value = null
     } catch (err) {
