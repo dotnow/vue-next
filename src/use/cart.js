@@ -119,6 +119,7 @@ export const useCart = () => {
 
   const transferCart = async () => {
     const localCart = getLocalCart()
+    clearLocalCart()
 
     if (localCart) {
       for (const cartItem of localCart.items) {
@@ -129,8 +130,6 @@ export const useCart = () => {
         await applyPromocode(promocode, true)
       }
     }
-
-    clearLocalCart()
   }
 
   const getLocalCart = () =>
