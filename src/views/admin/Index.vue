@@ -21,6 +21,11 @@ export default {
         label: 'Заказы',
         icon: 'pi pi-file',
         to: '/admin/orders'
+      },
+      {
+        label: 'Промокоды',
+        icon: 'pi pi-file',
+        to: '/admin/promocodes'
       }
     ]
     return {

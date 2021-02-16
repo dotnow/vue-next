@@ -156,20 +156,18 @@ export default {
   setup() {
     const store = useStore()
     const toast = useToast()
+    const { updateOrder, removeOrder, error } = useOrders()
 
     const showModal = ref(false)
     const order = ref({})
 
-    const { updateOrder, removeOrder, error } = useOrders()
-
     const product = computed(() => store.getters['products/byID'])
+    const headerText = computed(() => `Заказ #${order.value.id}`)
 
     const show = item => {
       order.value = JSON.parse(JSON.stringify(item))
       showModal.value = true
     }
-
-    const headerText = computed(() => `Заказ #${order.value.id}`)
 
     const onSaveOrder = async () => {
       await updateOrder(order.value)

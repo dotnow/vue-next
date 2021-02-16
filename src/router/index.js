@@ -91,6 +91,11 @@ const routes = [
         path: 'orders',
         name: 'admin-orders',
         component: () => import('@/views/admin/Orders')
+      },
+      {
+        path: 'promocodes',
+        name: 'admin-promocodes',
+        component: () => import('@/views/admin/Promocodes')
       }
     ]
   }

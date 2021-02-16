@@ -40,26 +40,16 @@
         {{ slotProps.data.sum }}
       </template>
     </Column>
-    <!-- <Column header="Тип оплаты">
-      <template #body="slotProps">
-        {{ slotProps.data.payType }}
-      </template>
-    </Column> -->
     <Column header="Оплачено">
       <template #body="slotProps">
         {{ slotProps.data.payedSum }}
       </template>
     </Column>
-    <!-- <Column header="Доставка">
-      <template #body="slotProps">
-        {{ slotProps.data.deliveryType }}
-      </template>
-    </Column> -->
     <Column :exportable="false" headerStyle="width: 100px">
       <template #body="slotProps">
         <Button
           icon="pi pi-eye"
-          class="p-button-text p-button-warning p-mr-2"
+          class="p-button-text p-mr-2"
           @click="onShowModal(slotProps.data)"
         />
       </template>
@@ -74,23 +64,15 @@
 <script>
 import { useStore } from 'vuex'
 import { computed, ref } from 'vue'
-// import { useCategories } from '@/use/categories'
-// import { useToast } from 'primevue/usetoast'
-// import { useConfirm } from 'primevue/useconfirm'
 import OrderModal from '@/components/admin/orders/OrderModal'
 import OrderStatus from '@/components/order/OrderStatus'
 
 export default {
   setup() {
     const store = useStore()
-    // const toast = useToast()
-    // const confirm = useConfirm()
 
     const modal = ref(null)
-
     const filters = ref({})
-
-    // const { removeCategory, error } = useCategories()
 
     const onShowModal = order => {
       modal.value.show(order)
