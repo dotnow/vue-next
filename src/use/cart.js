@@ -128,9 +128,9 @@ export const useCart = () => {
       for (const promocode of localCart.promocodes) {
         await applyPromocode(promocode, true)
       }
-
-      clearLocalCart()
     }
+
+    clearLocalCart()
   }
 
   const getLocalCart = () =>
