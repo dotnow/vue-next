@@ -16,7 +16,7 @@ export const useOrders = () => {
       await newOrderRef.set(order)
 
       for (const item of order.items) {
-        productsRef.child(item.id).transaction(el => {
+        productsRef.child(item.id.replace('-promo', '')).transaction(el => {
           if (el && el.stock) {
             el.stock--
           }

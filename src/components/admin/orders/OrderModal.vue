@@ -125,28 +125,20 @@
         </template>
       </Column>
     </DataTable>
-    <!-- <div class="p-fluid">
-      <div class="p-field">
-        <label for="name">Наименование</label>
-        <InputText id="name" type="text" v-model="category.name" />
-      </div>
-
-      <div class="p-field p-mb-5">
-        <label for="parentID">Родительский каталог</label>
-        <Dropdown
-          id="parentID"
-          v-model="category.parentID"
-          :options="categories"
-          optionLabel="name"
-          optionValue="id"
-          placeholder="Выберите родительскую категорию"
-        />
-      </div>
-    </div> -->
-
     <template #footer>
-      <Button label="Удалить заказ" icon="pi pi-trash" @click="onRemoveOrder" />
-      <Button label="Обновить заказ" icon="pi pi-check" @click="onSaveOrder" />
+      <Button
+        label="Удалить заказ"
+        class="p-button-text"
+        icon="pi pi-trash"
+        @click="onRemoveOrder"
+        disabled
+      />
+      <Button
+        label="Обновить заказ"
+        class="p-button-text"
+        icon="pi pi-check"
+        @click="onSaveOrder"
+      />
     </template>
   </Dialog>
 </template>
@@ -220,39 +212,3 @@ export default {
   components: { OrderStatus, OrderPayType, OrderDeliveryType }
 }
 </script>
-
-<style>
-.order-badge {
-  border-radius: 2px;
-  padding: 0.25em 0.5rem;
-  text-transform: uppercase;
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.3px;
-}
-
-.order-badge.order-cash {
-  background: #c8e6c9;
-  color: #256029;
-}
-
-.order-badge.order-delivered {
-  background: #c8e6c9;
-  color: #256029;
-}
-
-.order-badge.order-cancelled {
-  background: #ffcdd2;
-  color: #c63737;
-}
-
-.order-badge.order-pending {
-  background: #feedaf;
-  color: #8a5340;
-}
-
-.order-badge.order-in-progress {
-  background: #eccfff;
-  color: #694382;
-}
-</style>
