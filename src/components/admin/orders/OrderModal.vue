@@ -55,7 +55,12 @@
             Промокоды
           </div>
           <div class="p-col-6 p-text-right">
-            {{ order.promocodes }}
+            <Chip
+              class="p-m-2"
+              :label="el"
+              v-for="el in order.promocodes"
+              :key="`promocode_${el}`"
+            />
           </div>
 
           <div class="p-col-6 p-text-bold">

@@ -15,11 +15,6 @@
     <template #empty>
       <app-empty>Нет элементов для отображения</app-empty>
     </template>
-    <Column
-      selectionMode="multiple"
-      headerStyle="width: 3rem"
-      :exportable="false"
-    ></Column>
     <Column header="Дата создания">
       <template #body="slotProps">
         {{ new Date(slotProps.data.timestamp).toLocaleString() }}
@@ -35,14 +30,18 @@
         {{ slotProps.data.firstName + ' ' + slotProps.data.lastName }}
       </template>
     </Column>
-    <Column header="Сумма">
+    <Column header="Сумма" headerClass="p-text-right" bodyClass="p-text-right">
       <template #body="slotProps">
-        {{ slotProps.data.sum }}
+        {{ formatCurrency(slotProps.data.sum) }}
       </template>
     </Column>
-    <Column header="Оплачено">
+    <Column
+      header="Оплачено"
+      headerClass="p-text-right"
+      bodyClass="p-text-right"
+    >
       <template #body="slotProps">
-        {{ slotProps.data.payedSum }}
+        {{ formatCurrency(slotProps.data.payedSum) }}
       </template>
     </Column>
     <Column :exportable="false" headerStyle="width: 100px">
@@ -63,7 +62,7 @@
 
 <script>
 import { useStore } from 'vuex'
-import { computed, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import OrderModal from '@/components/admin/orders/OrderModal'
 import OrderStatus from '@/components/order/OrderStatus'
 
@@ -82,6 +81,7 @@ export default {
       onShowModal,
       modal,
       filters,
+      formatCurrency: inject('formatCurrency'),
       orders: computed(() => store.getters['orders/all'])
     }
   },

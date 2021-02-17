@@ -1,14 +1,14 @@
 <template>
   <cart-input
-    v-if="incart && !incart.promo"
-    :amount="incart.amount"
+    v-show="incart && !incart.promo"
+    :amount="incart?.amount ?? 0"
     :product="product"
   ></cart-input>
   <Button
     :label="product.stock ? label : 'Нет в наличии'"
     icon="pi pi-shopping-cart"
     @click="addToCart"
-    v-else
+    v-if="!incart"
     :disabled="!product.stock"
   ></Button>
 </template>

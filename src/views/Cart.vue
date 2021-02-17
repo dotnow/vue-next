@@ -33,21 +33,21 @@
         </table>
       </div>
       <div class="p-col-12 p-text-right">
-        <InlineMessage severity="info"
+        <inline-message severity="info"
           ><b>123-123-123</b> – Скидка 10%, если сумма товаров в корзине больше
-          500 ₽</InlineMessage
+          500 ₽</inline-message
         >
       </div>
       <div class="p-col-12 p-text-right">
-        <InlineMessage severity="info"
+        <inline-message severity="info"
           ><b>222-222-222</b> – Добавляет товар `Укроп` в корзину в качестве
-          подарка</InlineMessage
+          подарка</inline-message
         >
       </div>
       <div class="p-col-12 p-text-right">
-        <InlineMessage severity="info"
+        <inline-message severity="info"
           ><b>333-333-333</b> – Фиксированная скидка 200 ₽ на общую сумму
-          корзины</InlineMessage
+          корзины</inline-message
         >
       </div>
       <div class="p-datatable-footer p-grid p-jc-end">
