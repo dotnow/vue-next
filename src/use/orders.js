@@ -18,7 +18,7 @@ export const useOrders = () => {
       for (const item of order.items) {
         productsRef.child(item.id.replace('-promo', '')).transaction(el => {
           if (el && el.stock) {
-            el.stock--
+            el.stock -= item.amount
           }
           return el
         })
