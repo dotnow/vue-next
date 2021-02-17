@@ -74,12 +74,15 @@ export default {
         } else {
           filter.value['categoryID'] = [e.key]
         }
+      } else {
+        delete filter.value['categoryID']
+        selectedCategories.value = { '': true }
       }
     }
 
     const unselectCategory = e => {
       if (e.key) {
-        filter.value['categoryID'] = filter.value['categoryID'].filter(
+        filter.value['categoryID'] = filter.value['categoryID']?.filter(
           el => el !== e.key
         )
       }

@@ -48,16 +48,6 @@ const routes = [
     }
   },
   {
-    path: '/order',
-    name: 'order',
-    component: () => import('@/views/Order'),
-    beforeEnter: requireAuth,
-    meta: {
-      layout: 'main',
-      title: 'Оформление заказа'
-    }
-  },
-  {
     path: '/auth',
     name: 'auth',
     component: Auth,
@@ -98,6 +88,11 @@ const routes = [
         component: () => import('@/views/admin/Promocodes')
       }
     ]
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: '404',
+    redirect: '/'
   }
 ]
 
