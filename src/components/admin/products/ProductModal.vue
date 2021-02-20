@@ -172,9 +172,12 @@ export default {
     const productSaved = ref(false)
     const initialItem = reactive({})
 
+    // Минимальное кол-во символов в названии
     const NAME_MIN_LENGTH = 3
+    // Максимальное кол-во символов в названии
     const NAME_MAX_LENGTH = 20
 
+    // Функция-помощник для установки ключе и детей
     const setKeysAndChildren = item => {
       const children = store.getters['categories/getChildrens'](item.id)
 
@@ -228,6 +231,7 @@ export default {
     const { value: price } = useField('price')
     const { value: stock } = useField('stock')
 
+    // Текст кнопки действия
     const actionText = computed(() => (isNew.value ? 'Создать' : 'Обновить'))
 
     const isFormValid = computed(
@@ -274,6 +278,7 @@ export default {
       }
     }
 
+    // Удаление изображения
     const imageRemove = async () => {
       await removeFile(imgFileNameForm.value)
       if (error.value) {
@@ -289,6 +294,7 @@ export default {
       }
     }
 
+    // Загрузка изображения на сервер
     const imageUpload = async event => {
       if (imgFileNameForm.value) {
         await imageRemove()
@@ -309,6 +315,7 @@ export default {
       }
     }
 
+    // Открытие модального окна
     const show = item => {
       if (item) {
         isNew.value = false
@@ -362,6 +369,7 @@ export default {
       }
     })
 
+    // Нажатие на кнопку действия
     const onSaveProduct = async () => {
       const product = {
         id: id.value,
@@ -386,6 +394,7 @@ export default {
       showModal.value = false
     }
 
+    // Создание нового товара
     const onAddProduct = async product => {
       await addProduct(product)
 
@@ -406,6 +415,7 @@ export default {
       }
     }
 
+    // Обновление существующего товара
     const onUpdateProduct = async product => {
       await updateProduct(product)
 

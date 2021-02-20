@@ -190,3 +190,11 @@ p {
   background: #eccfff;
   color: #694382;
 }
+
+.product-announcement {
+  overflow: hidden;
+  min-height: 20px;
+}
+.product-announcement span {
+  white-space: nowrap;
+}

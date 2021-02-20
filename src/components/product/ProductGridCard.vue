@@ -20,8 +20,8 @@
               categoryByID(product.categoryID).name
             }}</span>
           </div>
-          <div class="p-card-subtitle p-text-center">
-            <span class="product-category">{{ product.announcement }}</span>
+          <div class="p-card-subtitle p-text-center product-announcement">
+            <span>{{ product.announcement }}</span>
           </div>
           <div class="p-card-title p-text-center">
             {{ formatCurrency(product.price) }}
@@ -56,7 +56,6 @@ export default {
     const store = useStore()
 
     const cart = computed(() => store.getters['cart/cart'])
-
     const inCart = computed(() =>
       cart.value.find(el => el.id === props.product.id)
     )

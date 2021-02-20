@@ -2,14 +2,14 @@
   <div class="p-text-center">
     <h5 class="p-mt-0">Данные администратора</h5>
     <div class="p-mb-3">
-      <InlineMessage severity="info">
+      <inline-message severity="info">
         Телефон: +7 999 999-99-99
-      </InlineMessage>
+      </inline-message>
     </div>
     <div class="p-mb-3">
-      <InlineMessage severity="info">
+      <inline-message severity="info">
         SMS код: 000000
-      </InlineMessage>
+      </inline-message>
     </div>
   </div>
   <form @submit.prevent="onSubmit">
@@ -106,8 +106,8 @@ export default {
             life: 3000
           })
 
-          if (store.getters.displayAuthModal) {
-            store.commit('SET_AUTH_MODAL', false)
+          if (store.getters.authModal) {
+            store.commit('TOGGLE_AUTH_MODAL')
           } else {
             router.replace({ name: 'shop' })
           }

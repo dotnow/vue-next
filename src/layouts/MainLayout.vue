@@ -11,7 +11,7 @@
 
   <Dialog
     header="Авторизация"
-    v-model:visible="displayAuthModal"
+    v-model:visible="authModal"
     :style="{ width: '50vw ' }"
     :modal="true"
     :closable="false"
@@ -33,17 +33,13 @@ export default {
   setup() {
     const store = useStore()
 
-    const closeModal = () => {
-      store.commit('SET_AUTH_MODAL', false)
-    }
-
     return {
-      closeModal,
-      displayAuthModal: computed(() => store.getters.displayAuthModal)
+      closeModal: () => {
+        store.commit('TOGGLE_AUTH_MODAL')
+      },
+      authModal: computed(() => store.getters.authModal)
     }
   },
   components: { AppNavbar, SigninForm }
 }
 </script>
-
-<style></style>

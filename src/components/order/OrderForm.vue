@@ -22,20 +22,42 @@
             >Заполните поле</small
           >
         </div>
+
+        <div class="p-field">
+          <label for="lastName">Способ оплаты</label>
+          <Dropdown
+            v-model="payType"
+            :options="payTypes"
+            optionValue="id"
+            optionLabel="name"
+            placeholder="Выберите способ оплаты"
+          />
+        </div>
+
+        <div class="p-field">
+          <label for="lastName">Способ доставки</label>
+          <Dropdown
+            v-model="deliveryType"
+            :options="deliveryTypes"
+            optionValue="id"
+            optionLabel="name"
+            placeholder="Способ доставки"
+          />
+        </div>
       </div>
     </template>
     <template v-slot:footer>
       <div class="p-grid p-nogutter p-justify-between">
         <Button
           v-if="isAuth"
-          label="Оформить заказ"
-          @click="onAddOrder()"
+          :label="isNoCashPayType ? 'Оплатить заказ' : 'Оформить заказ'"
+          @click="onSubmit"
           iconPos="right"
         />
         <Button
           v-else
           label="Войдите в систему для оформления заказа"
-          @click="displayAuthModal"
+          @click="authModal"
         >
         </Button>
       </div>
@@ -44,24 +66,31 @@
 </template>
 
 <script>
-import { useOrders } from '@/use/orders'
 import { computed, ref, reactive } from 'vue'
 import { useStore } from 'vuex'
+import { usePay } from '@/use/pay'
+import { useOrders } from '@/use/orders'
+import { useToast } from 'primevue/usetoast'
 
 export default {
   setup(_, { emit }) {
     const store = useStore()
+    const toast = useToast()
+    const { pay, error: payError } = usePay()
     const { addOrder, newOrderID, error } = useOrders()
 
     const firstName = ref('')
     const lastName = ref('')
     const validationErrors = reactive({})
+    const payType = ref(0)
+    const deliveryType = ref(0)
 
     const user = computed(() => store.getters.user)
     const cartItems = computed(() => store.getters['cart/cart'])
     const cartTotalSum = computed(() => store.getters['cart/cartTotalSum'])
-
-    const displayAuthModal = () => store.commit('SET_AUTH_MODAL', true)
+    const payTypes = computed(() => store.getters['orders/payTypes'])
+    const deliveryTypes = computed(() => store.getters['orders/deliveryTypes'])
+    const isNoCashPayType = computed(() => payType.value === 0)
 
     const validateForm = () => {
       if (!firstName.value) validationErrors['firstName'] = true
@@ -73,41 +102,100 @@ export default {
       return !Object.keys(validationErrors).length
     }
 
-    const onAddOrder = async () => {
+    const onSubmit = async () => {
       if (validateForm()) {
-        await addOrder({
-          timestamp: Date.now(),
-          status: 0,
-          userID: user.value.uid,
-          firstName: firstName.value,
-          lastName: lastName.value,
-          phoneNumber: user.value.phoneNumber,
-          items: store.getters['cart/cart'],
-          promocodes: store.getters['cart/promocodes'],
-          sum: cartTotalSum.value,
-          discount: store.getters['cart/cartDiscount'],
-          payedSum: 0,
-          payType: 0,
-          deliveryType: 1
-        })
-
-        if (error.value) {
-          console.log('error.value', error.value)
+        if (isNoCashPayType.value) {
+          await onPay()
         } else {
-          emit('update:id', newOrderID.value)
+          await onAddOrder()
         }
       }
     }
 
+    const onPay = async () => {
+      try {
+        await pay({
+          description: 'Покупка товаров Vladilen Online',
+          amount: cartTotalSum.value,
+          accountId: user.value.uid,
+          data: {
+            firstName: firstName.value,
+            lastName: lastName.value,
+            phone: user.value.phoneNumber
+          }
+        })
+
+        if (!payError.value) {
+          await onAddOrder()
+        } else {
+          toast.add({
+            severity: 'error',
+            summary: 'Ошибка',
+            detail: payError.value,
+            life: 3000
+          })
+        }
+      } catch (err) {
+        toast.add({
+          severity: 'error',
+          summary: 'Ошибка',
+          detail: 'Вы отменили оплату',
+          life: 3000
+        })
+      }
+    }
+
+    const onAddOrder = async () => {
+      await addOrder({
+        timestamp: Date.now(),
+        status: 0,
+        userID: user.value.uid,
+        firstName: firstName.value,
+        lastName: lastName.value,
+        phoneNumber: user.value.phoneNumber,
+        items: store.getters['cart/cart'],
+        promocodes: store.getters['cart/promocodes'],
+        sum: cartTotalSum.value,
+        discount: store.getters['cart/cartDiscount'],
+        payedSum: cartTotalSum.value,
+        payType: payType.value,
+        deliveryType: deliveryType.value
+      })
+
+      if (error.value) {
+        console.log('error.value', error.value)
+        toast.add({
+          severity: 'error',
+          summary: 'Ошибка',
+          detail: 'Ошибка при оформлении заказа. Попробуйте позже',
+          life: 3000
+        })
+      } else {
+        toast.add({
+          severity: 'success',
+          summary: 'Успешно',
+          detail: 'Заказ оформлен',
+          life: 3000
+        })
+        emit('update:id', newOrderID.value)
+      }
+    }
+
     return {
+      payType,
+      deliveryType,
+      payTypes,
+      deliveryTypes,
       cartItems,
       firstName,
       lastName,
       newOrderID,
       cartTotalSum,
       validationErrors,
-      displayAuthModal,
-      onAddOrder,
+      authModal: () => store.commit('TOGGLE_AUTH_MODAL'),
+      onSubmit,
+      onPay,
+      isNoCashPayType,
       isAuth: computed(() => store.getters.isAuth)
     }
   }

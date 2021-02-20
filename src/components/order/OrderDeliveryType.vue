@@ -1,28 +1,30 @@
 <template>
-  <span :class="['order-badge', current.class]">
-    {{ current.label }}
+  <span :class="['order-badge', deliveryType.class]">
+    {{ deliveryType.name }}
   </span>
 </template>
 
 <script>
 import { computed } from 'vue'
+import { useStore } from 'vuex'
+
 export default {
   props: {
-    type: {
+    id: {
       type: Number,
       required: true
     }
   },
 
   setup(props) {
-    const typeList = [
-      { id: 0, label: 'Самовывоз', class: 'order-pending' },
-      { id: 1, label: 'Курьер', class: 'order-in-progress' },
-      { id: 2, label: 'Почтой России', class: 'order-delivered' }
-    ]
+    const store = useStore()
+
+    const deliveryTypeByID = computed(
+      () => store.getters['orders/deliveryTypeByID']
+    )
 
     return {
-      current: computed(() => typeList.find(el => el.id === props.type))
+      deliveryType: deliveryTypeByID.value(props.id)
     }
   }
 }

@@ -74,16 +74,14 @@
             Тип оплаты
           </div>
           <div class="p-col-6 p-text-right">
-            <order-pay-type :type="order.payType"></order-pay-type>
+            <order-pay-type :id="order.payType"></order-pay-type>
           </div>
 
           <div class="p-col-6 p-text-bold">
             Тип доставки
           </div>
           <div class="p-col-6 p-text-right">
-            <order-delivery-type
-              :type="order.deliveryType"
-            ></order-delivery-type>
+            <order-delivery-type :id="order.deliveryType"></order-delivery-type>
           </div>
         </div>
       </div>
@@ -136,7 +134,6 @@
         class="p-button-text"
         icon="pi pi-trash"
         @click="onRemoveOrder"
-        disabled
       />
       <Button
         label="Обновить заказ"
@@ -169,11 +166,20 @@ export default {
     const product = computed(() => store.getters['products/byID'])
     const headerText = computed(() => `Заказ #${order.value.id}`)
 
+    // Открытие модального окна
     const show = item => {
+      // FIXME: unref() не убирает реактивность, приходится маршалить и парсить
+      //  объект 'item' для того, чтобы поля объекта обновлялись при 2-м и последующих
+      //  открытиях модального окна
+      //  Для того, чтобы понять, что не так:
+      //  ––> order.value = item
+      //  Открыть существующий элемент, закрыть модальное окно,
+      //  затем открыть другой существующий элемент/создать новый
       order.value = JSON.parse(JSON.stringify(item))
       showModal.value = true
     }
 
+    // Нажатие на кнопку действия
     const onSaveOrder = async () => {
       await updateOrder(order.value)
 
@@ -196,8 +202,10 @@ export default {
       }
     }
 
+    // Удаление заказа
     const onRemoveOrder = async () => {
       await removeOrder(order.value.id)
+      showModal.value = false
     }
 
     return {

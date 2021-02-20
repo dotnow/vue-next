@@ -149,12 +149,11 @@ export default {
     const store = useStore()
     const toast = useToast()
     const confirm = useConfirm()
+    const { removeProduct, error } = useProducts()
 
     const filters = ref({})
     const modal = ref(null)
     const selectedProducts = ref([])
-
-    const { removeProduct, error } = useProducts()
 
     const onShowModal = product => {
       modal.value.show(product)
@@ -215,6 +214,7 @@ export default {
         })
       }
     }
+
     return {
       modal,
       filters,

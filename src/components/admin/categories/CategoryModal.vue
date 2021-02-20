@@ -59,9 +59,17 @@ export default {
       )
     )
 
+    // Открытие модального окна
     const show = item => {
       if (item) {
         isNew.value = false
+        // FIXME: unref() не убирает реактивность, приходится маршалить и парсить
+        //  объект 'item' для того, чтобы поля объекта обновлялись при 2-м и последующих
+        //  открытиях модального окна
+        //  Для того, чтобы понять, что не так:
+        //  ––> category.value = item
+        //  Открыть существующий элемент, закрыть модальное окно,
+        //  затем открыть другой существующий элемент/создать новый
         category.value = JSON.parse(JSON.stringify(item))
       } else {
         isNew.value = true
@@ -73,8 +81,10 @@ export default {
       showModal.value = true
     }
 
+    // Текст кнопки действия
     const actionText = computed(() => (isNew.value ? 'Создать' : 'Обновить'))
 
+    // Нажатие на кнопку действия
     const onSaveCategory = async () => {
       if (isNew.value) {
         await onAddCategory(category.value)
@@ -84,6 +94,7 @@ export default {
       showModal.value = false
     }
 
+    // Создание новой категории
     const onAddCategory = async category => {
       await addCategory(category)
 
@@ -104,6 +115,7 @@ export default {
       }
     }
 
+    // Обновление существующей категории
     const onUpdateCategory = async category => {
       await updateCategory(category)
 

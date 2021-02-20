@@ -66,6 +66,7 @@ export default {
 
   setup(props) {
     const store = useStore()
+
     const layout = ref(null)
     const filter = reactive({})
 

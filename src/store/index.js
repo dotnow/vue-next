@@ -12,14 +12,14 @@ export default createStore({
   modules,
   state: {
     layout: 'grid',
-    displayAuthModal: false,
+    authModal: false,
     loading: false,
     user: null
   },
   mutations: {
     SWITCH_LAYOUT: (state, payload) => (state.layout = payload),
 
-    SET_AUTH_MODAL: (state, payload) => (state.displayAuthModal = !!payload),
+    TOGGLE_AUTH_MODAL: state => (state.authModal = !state.authModal),
 
     SET_LOADING: (state, payload) => (state.loading = !!payload),
 
@@ -32,7 +32,7 @@ export default createStore({
     user: state => state.user,
     isAdmin: state => state.user && state.user.role === 'admin',
     username: state => state.user.name ?? state.user.phoneNumber,
-    displayAuthModal: state => state.displayAuthModal,
+    authModal: state => state.authModal,
     loading: state => state.loading
   }
 })

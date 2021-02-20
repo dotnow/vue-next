@@ -33,7 +33,7 @@
           </li>
         </router-link>
 
-        <li @click="displayAuthModal" v-if="!isAuth">
+        <li @click="authModal" v-if="!isAuth">
           <a href="#">Вход</a>
         </li>
 
@@ -48,9 +48,9 @@
 </template>
 
 <script>
-import { useAuth } from '@/use/auth'
 import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
+import { useAuth } from '@/use/auth'
 
 export default {
   setup() {
@@ -67,24 +67,17 @@ export default {
       }
     ]
 
-    const toggleMenu = event => userMenu.value.toggle(event)
-
-    const displayAuthModal = () => store.commit('SET_AUTH_MODAL', true)
-
     return {
       userMenu,
-      toggleMenu,
       menuItems,
       appName,
-      displayAuthModal,
+      toggleMenu: event => userMenu.value.toggle(event),
+      authModal: () => store.commit('TOGGLE_AUTH_MODAL'),
       isAuth: computed(() => store.getters.isAuth),
       isAdmin: computed(() => store.getters.isAdmin),
       username: computed(() => store.getters.username),
       cartTotalAmount: computed(() => store.getters['cart/cartTotalAmount'])
     }
   }
-  // components: { NavLink }
 }
 </script>
-
-<style></style>

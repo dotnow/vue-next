@@ -1,28 +1,28 @@
 <template>
-  <span :class="['order-badge', current.class]">
-    {{ current.label }}
+  <span :class="['order-badge', payType.class]">
+    {{ payType.name }}
   </span>
 </template>
 
 <script>
 import { computed } from 'vue'
+import { useStore } from 'vuex'
+
 export default {
   props: {
-    type: {
+    id: {
       type: Number,
       required: true
     }
   },
 
   setup(props) {
-    const typeList = [
-      { id: 0, label: 'Наличными', class: 'order-cash' },
-      { id: 1, label: 'Картой', class: 'order-in-progress' },
-      { id: 2, label: 'Расчётный счёт', class: 'order-delivered' }
-    ]
+    const store = useStore()
+
+    const payTypeByID = computed(() => store.getters['orders/payTypeByID'])
 
     return {
-      current: computed(() => typeList.find(el => el.id === props.type))
+      payType: payTypeByID.value(props.id)
     }
   }
 }

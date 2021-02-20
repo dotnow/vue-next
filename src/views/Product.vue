@@ -90,15 +90,14 @@ export default {
     const route = useRoute()
 
     const modal = ref(false)
-    const cart = computed(() => store.getters['cart/cart'])
 
+    const cart = computed(() => store.getters['cart/cart'])
     const product = computed(() =>
       store.getters['products/byID'](route.params.id)
     )
     const inCart = computed(() =>
       cart.value.find(el => el.id === product.value.id)
     )
-
     const sameProducts = computed(() =>
       store.getters['products/byCategoryID'](product.value.categoryID).filter(
         el => el.id !== product.value.id

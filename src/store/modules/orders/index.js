@@ -1,6 +1,8 @@
 export default {
   state: {
-    orders: []
+    orders: [],
+    payTypes: [],
+    deliveryTypes: []
   },
 
   mutations: {
@@ -15,13 +17,44 @@ export default {
     },
 
     ORDER_REMOVE: (state, payload) =>
-      (state.orders = state.orders.filter(el => el.id != payload))
+      (state.orders = state.orders.filter(el => el.id != payload)),
+
+    PAY_TYPE_ADD: (state, payload) => state.payTypes.push(payload),
+
+    PAY_TYPE_UPDATE: (state, payload) => {
+      const index = state.payTypes.findIndex(el => el.id === payload.id)
+
+      if (index !== -1) {
+        state.payTypes[index] = payload
+      }
+    },
+
+    PAY_TYPE_REMOVE: (state, payload) =>
+      (state.payTypes = state.payTypes.filter(el => el.id != payload)),
+
+    DELIVERY_TYPE_ADD: (state, payload) => state.deliveryTypes.push(payload),
+
+    DELIVERY_TYPE_UPDATE: (state, payload) => {
+      const index = state.deliveryTypes.findIndex(el => el.id === payload.id)
+
+      if (index !== -1) {
+        state.deliveryTypes[index] = payload
+      }
+    },
+
+    DELIVERY_TYPE_REMOVE: (state, payload) =>
+      (state.deliveryTypes = state.deliveryTypes.filter(el => el.id != payload))
   },
 
   actions: {},
 
   getters: {
     all: state => state.orders,
+    payTypes: state => state.payTypes,
+    payTypeByID: state => id => state.payTypes.find(el => el.id === id),
+    deliveryTypes: state => state.deliveryTypes,
+    deliveryTypeByID: state => id =>
+      state.deliveryTypes.find(el => el.id === id),
     byID: state => id => state.orders.find(el => el.id === id)
   }
 }

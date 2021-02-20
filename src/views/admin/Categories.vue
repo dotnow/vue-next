@@ -100,14 +100,13 @@ export default {
     const store = useStore()
     const toast = useToast()
     const confirm = useConfirm()
+    const { removeCategory, error } = useCategories()
 
     const modal = ref(null)
 
     const filters = ref({})
     const category = ref({})
     const selectedCategories = ref([])
-
-    const { removeCategory, error } = useCategories()
 
     const onShowModal = category => {
       modal.value.show(category)

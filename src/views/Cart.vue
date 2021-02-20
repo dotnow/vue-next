@@ -116,10 +116,10 @@ export default {
     const store = useStore()
     const router = useRouter()
     const toast = useToast()
-    const newOrderID = ref(null)
-
-    const promocode = ref('')
     const { applyPromocode, error } = useCart()
+
+    const newOrderID = ref(null)
+    const promocode = ref('')
 
     const promocodeByID = computed(() => store.getters['promocodes/byID'])
     const inCartPromocodes = computed(() => store.getters['cart/promocodes'])
@@ -166,6 +166,7 @@ export default {
         }
       }
     }
+
     return {
       promocode,
       isPromocodeButtonDisabled: computed(

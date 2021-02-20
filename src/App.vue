@@ -1,8 +1,9 @@
 <template>
   <component :is="layout" v-if="layout" />
-  <toast></toast>
-  <!-- <confirm-popup></confirm-popup> -->
-  <confirm-dialog></confirm-dialog>
+  <teleport to="body">
+    <toast></toast>
+    <confirm-dialog></confirm-dialog>
+  </teleport>
 </template>
 
 <script>
