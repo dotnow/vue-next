@@ -1,4 +1,4 @@
-import { dbService } from './init'
+import { dbService, transfrom } from './init'
 import { useCart } from '@/use/cart'
 import store from '@/store'
 
@@ -18,7 +18,7 @@ const attachCart = uid => {
     if (data.key === 'promocodes') {
       store.commit('cart/SET_PROMOCODES', data.val())
     } else {
-      store.commit('cart/CART_SET_ITEM', { id: data.key, ...data.val() })
+      store.commit('cart/CART_SET_ITEM', transfrom(data))
     }
   })
 
@@ -29,7 +29,7 @@ const attachCart = uid => {
       if (!data.val().amount) {
         data.ref.remove()
       } else {
-        store.commit('cart/CART_SET_ITEM', { id: data.key, ...data.val() })
+        store.commit('cart/CART_SET_ITEM', transfrom(data))
       }
     }
   })

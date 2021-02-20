@@ -1,15 +1,15 @@
-import { dbService } from './init'
+import { dbService, transfrom } from './init'
 import store from '@/store'
 
 // Категории
 const categoriesRef = dbService.ref('categories')
 
 categoriesRef.on('child_added', data => {
-  store.commit('categories/CATEGORY_ADD', { id: data.key, ...data.val() })
+  store.commit('categories/CATEGORY_ADD', transfrom(data))
 })
 
 categoriesRef.on('child_changed', data => {
-  store.commit('categories/CATEGORY_UPDATE', { id: data.key, ...data.val() })
+  store.commit('categories/CATEGORY_UPDATE', transfrom(data))
 })
 
 categoriesRef.on('child_removed', data =>
