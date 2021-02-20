@@ -247,7 +247,7 @@ export default {
     // Удаление заказа
     const onRemoveOrder = () => {
       confirm.require({
-        message: 'Вы дейсткительно хотите удалить заказ?',
+        message: 'Вы действительно хотите удалить заказ?',
         header: 'Подтверждение',
         acceptLabel: 'Да',
         rejectLabel: 'Нет',
