@@ -4,6 +4,7 @@ import store from '@/store'
 // Типы оплаты и доставки
 const payTypesRef = dbService.ref('payTypes')
 const deliveryTypesRef = dbService.ref('deliveryTypes')
+const orderStatusRef = dbService.ref('orderStatus')
 
 payTypesRef.on('child_added', data => {
   store.commit('orders/PAY_TYPE_ADD', { id: data.key, ...data.val() })
@@ -27,6 +28,18 @@ deliveryTypesRef.on('child_changed', data => {
 
 deliveryTypesRef.on('child_removed', data =>
   store.commit('orders/DELIVERY_TYPE_REMOVE', data.key)
+)
+
+orderStatusRef.on('child_added', data => {
+  store.commit('orders/ORDER_STATUS_ADD', { id: data.key, ...data.val() })
+})
+
+orderStatusRef.on('child_changed', data => {
+  store.commit('orders/ORDER_STATUS_UPDATE', { id: data.key, ...data.val() })
+})
+
+orderStatusRef.on('child_removed', data =>
+  store.commit('orders/ORDER_STATUS_REMOVE', data.key)
 )
 
 // Заказы

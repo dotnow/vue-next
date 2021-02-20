@@ -24,7 +24,7 @@ export default {
     )
 
     return {
-      deliveryType: deliveryTypeByID.value(props.id)
+      deliveryType: computed(() => deliveryTypeByID.value(props.id))
     }
   }
 }

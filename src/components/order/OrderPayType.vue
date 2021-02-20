@@ -22,7 +22,7 @@ export default {
     const payTypeByID = computed(() => store.getters['orders/payTypeByID'])
 
     return {
-      payType: payTypeByID.value(props.id)
+      payType: computed(() => payTypeByID.value(props.id))
     }
   }
 }

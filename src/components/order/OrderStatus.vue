@@ -1,29 +1,30 @@
 <template>
-  <span :class="['order-badge', current.class]">
-    {{ current.label }}
+  <span :class="['order-badge', orderStatus.class]">
+    {{ orderStatus.name }}
   </span>
 </template>
 
 <script>
 import { computed } from 'vue'
+import { useStore } from 'vuex'
+
 export default {
   props: {
-    type: {
+    id: {
       type: Number,
       required: true
     }
   },
 
   setup(props) {
-    const typeList = [
-      { id: 0, label: 'В обработке', class: 'order-pending' },
-      { id: 1, label: 'В пути', class: 'order-in-progress' },
-      { id: 2, label: 'Доставлен', class: 'order-delivered' },
-      { id: 3, label: 'Отменён', class: 'order-cancelled' }
-    ]
+    const store = useStore()
+
+    const orderStatusByID = computed(
+      () => store.getters['orders/orderStatusByID']
+    )
 
     return {
-      current: computed(() => typeList.find(el => el.id === props.type))
+      orderStatus: computed(() => orderStatusByID.value(props.id))
     }
   }
 }

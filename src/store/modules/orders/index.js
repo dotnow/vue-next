@@ -1,6 +1,7 @@
 export default {
   state: {
     orders: [],
+    orderStatuses: [],
     payTypes: [],
     deliveryTypes: []
   },
@@ -18,6 +19,21 @@ export default {
 
     ORDER_REMOVE: (state, payload) =>
       (state.orders = state.orders.filter(el => el.id != payload)),
+
+    ORDER_STATUS_ADD: (state, payload) => state.orderStatuses.push(payload),
+
+    ORDER_STATUS_UPDATE: (state, payload) => {
+      const index = state.orderStatuses.findIndex(el => el.id === payload.id)
+
+      if (index !== -1) {
+        state.orderStatuses[index] = payload
+      }
+    },
+
+    ORDER_STATUS_REMOVE: (state, payload) =>
+      (state.orderStatuses = state.orderStatuses.filter(
+        el => el.id != payload
+      )),
 
     PAY_TYPE_ADD: (state, payload) => state.payTypes.push(payload),
 
@@ -50,6 +66,9 @@ export default {
 
   getters: {
     all: state => state.orders,
+    orderStatuses: state => state.orderStatuses,
+    orderStatusByID: state => id =>
+      state.orderStatuses.find(el => el.id === id),
     payTypes: state => state.payTypes,
     payTypeByID: state => id => state.payTypes.find(el => el.id === id),
     deliveryTypes: state => state.deliveryTypes,

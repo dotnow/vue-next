@@ -20,7 +20,19 @@
             Статус
           </div>
           <div class="p-col-6 p-text-right">
-            <order-status :type="order.status"></order-status>
+            <Dropdown
+              v-model="order.status"
+              :options="orderStatuses"
+              optionLabel="name"
+              optionValue="id"
+            >
+              <template #value="slotProps">
+                <order-status :id="slotProps.value"></order-status>
+              </template>
+              <template #option="slotProps">
+                <order-status :id="slotProps.option.id"></order-status>
+              </template>
+            </Dropdown>
           </div>
 
           <div class="p-col-6 p-text-bold">
@@ -74,14 +86,42 @@
             Тип оплаты
           </div>
           <div class="p-col-6 p-text-right">
-            <order-pay-type :id="order.payType"></order-pay-type>
+            <Dropdown
+              v-model="order.payType"
+              :options="payTypes"
+              optionLabel="name"
+              optionValue="id"
+            >
+              <template #value="slotProps">
+                <order-pay-type :id="slotProps.value"></order-pay-type>
+              </template>
+              <template #option="slotProps">
+                <order-pay-type :id="slotProps.option.id"></order-pay-type>
+              </template>
+            </Dropdown>
           </div>
 
           <div class="p-col-6 p-text-bold">
             Тип доставки
           </div>
           <div class="p-col-6 p-text-right">
-            <order-delivery-type :id="order.deliveryType"></order-delivery-type>
+            <Dropdown
+              v-model="order.deliveryType"
+              :options="deliveryTypes"
+              optionLabel="name"
+              optionValue="id"
+            >
+              <template #value="slotProps">
+                <order-delivery-type
+                  :id="slotProps.value"
+                ></order-delivery-type>
+              </template>
+              <template #option="slotProps">
+                <order-delivery-type
+                  :id="slotProps.option.id"
+                ></order-delivery-type>
+              </template>
+            </Dropdown>
           </div>
         </div>
       </div>
@@ -150,6 +190,7 @@ import { computed, inject, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { useOrders } from '@/use/orders'
 import { useStore } from 'vuex'
+import { useConfirm } from 'primevue/useconfirm'
 import OrderStatus from '@/components/order/OrderStatus'
 import OrderPayType from '@/components/order/OrderPayType'
 import OrderDeliveryType from '@/components/order/OrderDeliveryType'
@@ -158,6 +199,7 @@ export default {
   setup() {
     const store = useStore()
     const toast = useToast()
+    const confirm = useConfirm()
     const { updateOrder, removeOrder, error } = useOrders()
 
     const showModal = ref(false)
@@ -203,9 +245,19 @@ export default {
     }
 
     // Удаление заказа
-    const onRemoveOrder = async () => {
-      await removeOrder(order.value.id)
-      showModal.value = false
+    const onRemoveOrder = () => {
+      confirm.require({
+        message: 'Вы дейсткительно хотите удалить заказ?',
+        header: 'Подтверждение',
+        acceptLabel: 'Да',
+        rejectLabel: 'Нет',
+        icon: 'pi pi-exclamation-triangle',
+        accept: async () => {
+          await removeOrder(order.value.id)
+          showModal.value = false
+        },
+        reject: () => {}
+      })
     }
 
     return {
@@ -216,7 +268,10 @@ export default {
       onSaveOrder,
       onRemoveOrder,
       product,
-      formatCurrency: inject('formatCurrency')
+      formatCurrency: inject('formatCurrency'),
+      orderStatuses: computed(() => store.getters['orders/orderStatuses']),
+      payTypes: computed(() => store.getters['orders/payTypes']),
+      deliveryTypes: computed(() => store.getters['orders/deliveryTypes'])
     }
   },
 

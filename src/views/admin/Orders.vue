@@ -22,7 +22,7 @@
     </Column>
     <Column header="Статус">
       <template #body="slotProps">
-        <order-status :type="slotProps.data.status"></order-status>
+        <order-status :id="slotProps.data.status"></order-status>
       </template>
     </Column>
     <Column header="Пользователь">
