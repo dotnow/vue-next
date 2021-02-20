@@ -1,14 +1,12 @@
 import { createApp } from 'vue'
-import App from '@/App'
-import AppEmpty from '@/components/app/AppEmpty'
-import router from '@/router'
-import store from '@/store'
 import { authService } from '@/plugins/firebase'
 import { useUser } from '@/use/user'
 import PrimeVue from '@/plugins/primevue'
+import router from '@/router'
+import store from '@/store'
+import App from '@/App'
+import AppEmpty from '@/components/app/AppEmpty'
 import '@/assets/css/styles.css'
-
-let app = null
 
 const formatter = new Intl.NumberFormat('ru-RU', {
   style: 'currency',
@@ -18,6 +16,8 @@ const formatter = new Intl.NumberFormat('ru-RU', {
 })
 
 const formatCurrency = value => formatter.format(value) ?? 0
+
+let app = null
 
 authService.onAuthStateChanged(async user => {
   await useUser().fetchUser(user)

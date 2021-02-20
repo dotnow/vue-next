@@ -1,10 +1,8 @@
 import { dbService } from './init'
 import store from '@/store'
 
-// Типы оплаты и доставки
+// Типы оплаты
 const payTypesRef = dbService.ref('payTypes')
-const deliveryTypesRef = dbService.ref('deliveryTypes')
-const orderStatusRef = dbService.ref('orderStatus')
 
 payTypesRef.on('child_added', data => {
   store.commit('orders/PAY_TYPE_ADD', { id: data.key, ...data.val() })
@@ -18,6 +16,9 @@ payTypesRef.on('child_removed', data =>
   store.commit('orders/PAY_TYPE_REMOVE', data.key)
 )
 
+// Типы доставки
+const deliveryTypesRef = dbService.ref('deliveryTypes')
+
 deliveryTypesRef.on('child_added', data => {
   store.commit('orders/DELIVERY_TYPE_ADD', { id: data.key, ...data.val() })
 })
@@ -29,6 +30,9 @@ deliveryTypesRef.on('child_changed', data => {
 deliveryTypesRef.on('child_removed', data =>
   store.commit('orders/DELIVERY_TYPE_REMOVE', data.key)
 )
+
+// Статусы заказа
+const orderStatusRef = dbService.ref('orderStatus')
 
 orderStatusRef.on('child_added', data => {
   store.commit('orders/ORDER_STATUS_ADD', { id: data.key, ...data.val() })
@@ -43,7 +47,7 @@ orderStatusRef.on('child_removed', data =>
 )
 
 // Заказы
-let ordersRef = dbService.ref('orders')
+const ordersRef = dbService.ref('orders')
 
 const attachOrders = (uid = null) => {
   ordersRef.on('child_added', data => {
